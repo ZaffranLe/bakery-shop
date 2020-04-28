@@ -1,26 +1,23 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { Grid } from "semantic-ui-react";
+import SideMenu from "./components/layout/SideMenu";
+import Routes from "./routes/routes";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component {
+    render() {
+        return (
+            <div className="App">
+                <Grid padded>
+                    <Grid.Column width={2}>
+                        <SideMenu />
+                    </Grid.Column>
+                    <Grid.Column width={14} floated="right" id="content">
+                        <Routes />
+                    </Grid.Column>
+                </Grid>
+            </div>
+        );
+    }
 }
 
 export default App;
