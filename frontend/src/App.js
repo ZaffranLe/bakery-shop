@@ -1,23 +1,30 @@
 import React from "react";
-import { Grid } from "semantic-ui-react";
+import { Grid, Segment } from "semantic-ui-react";
 import SideMenu from "./components/layout/SideMenu";
 import Routes from "./routes/routes";
+import { connect } from "react-redux";
 
 class App extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    componentDidMount() {
+        // const token = window.localStorage.getItem("token");
+        // if (token && !this.props.user) {
+
+        // }
+    }
+
     render() {
         return (
             <div className="App">
-                <Grid padded>
-                    <Grid.Column width={2}>
-                        <SideMenu />
-                    </Grid.Column>
-                    <Grid.Column width={14} floated="right" id="content">
-                        <Routes />
-                    </Grid.Column>
-                </Grid>
+                <Routes />
             </div>
         );
     }
 }
 
-export default App;
+const mapStateToProps = ({ UserReducer }) => UserReducer;
+
+export default connect(mapStateToProps, null)(App);

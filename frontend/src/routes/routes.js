@@ -2,7 +2,7 @@ import React from "react";
 import { Router } from "react-router-dom";
 import { Route } from "react-router";
 import { history } from "./history";
-import HomePage from "../components/layout/index";
+import HomePage from "../pages/home-page/index";
 
 class Routes extends React.Component {
     constructor(props) {
