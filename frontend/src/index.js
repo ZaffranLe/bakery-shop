@@ -4,8 +4,7 @@ import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import { Provider } from "react-redux";
-import { CookiesProvider } from "react-cookie";
-import configureStore from "./redux/store";
+import { store } from "./redux/_reducers/store";
 import { BrowserRouter } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
@@ -13,14 +12,12 @@ import "./App.css";
 import "semantic-ui-css/semantic.min.css";
 
 ReactDOM.render(
-    <CookiesProvider>
-        <BrowserRouter>
-            <Provider store={configureStore()}>
-                <App />
-            </Provider>
-        </BrowserRouter>
+    <BrowserRouter>
+        <Provider store={store}>
+            <App />
+        </Provider>
         <ToastContainer />
-    </CookiesProvider>,
+    </BrowserRouter>,
     document.getElementById("root")
 );
 

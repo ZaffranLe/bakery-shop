@@ -3,7 +3,7 @@ const mysql = require("mysql");
 module.exports = function (logger, config) {
     const self = this;
 
-    self.pool = mysql.createPool(config);
+    self.pool = mysql.createPool(config[config.environment].mysql);
 
     this.getConnection = function getConnection() {
         return new Promise(function (resolve, reject) {
