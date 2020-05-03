@@ -48,7 +48,7 @@ class App extends React.Component {
     render() {
         const { user, loginModal, infoModal } = this.state;
         return (
-            <div className="App">
+            <div className="App" id="header">
                 <Menu inverted fluid color="brown" fixed="top">
                     <Menu.Item>
                         <Button inverted icon="home" content="Trang chủ" as="a" href="/" />
@@ -88,6 +88,16 @@ class App extends React.Component {
                 </Menu>
                 <Grid style={{ marginTop: -4 }}>
                     <Routes user={this.state.user} />
+                    <Button.Group vertical style={{ position: "fixed", right: 10, bottom: "30%" }}>
+                        <Button icon="facebook" color="facebook" href="#header" />
+                        <Button icon="facebook messenger" color="blue" href="#header" />
+                        <Button icon="twitter" color="twitter" href="#header" />
+                        <Button icon="instagram" color="instagram" href="#header" />
+                        <Button icon="mail" color="red" href="mailto:stungle154@gmail.com" />
+                    </Button.Group>
+                    <Button.Group vertical style={{ position: "fixed", right: 10, bottom: 10 }}>
+                        <Button icon="arrow up" color="yellow" href="#header" />
+                    </Button.Group>
                 </Grid>
                 <LoginModal open={loginModal} onClose={this.handleCloseModal} />
                 <InfoModal open={infoModal} onClose={this.handleCloseModal} />

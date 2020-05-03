@@ -27,7 +27,6 @@ function getTypes() {
             const resp = await _callApi();
             dispatch(_succeed(resp.data));
         } catch (e) {
-            toast.error("Có lỗi xảy ra khi lấy danh sách thể loại sản phẩm!");
             dispatch(_failed());
             console.error(e);
         }

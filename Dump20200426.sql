@@ -139,13 +139,13 @@ DROP TABLE IF EXISTS `image`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `image` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `url` varchar(255) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
   `idProduct` int(11) DEFAULT NULL,
   `isDeleted` int(11) DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `FK_image_product_idx` (`idProduct`),
   CONSTRAINT `FK_image_product` FOREIGN KEY (`idProduct`) REFERENCES `product` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -154,6 +154,7 @@ CREATE TABLE `image` (
 
 LOCK TABLES `image` WRITE;
 /*!40000 ALTER TABLE `image` DISABLE KEYS */;
+INSERT INTO `image` VALUES (13,'efb900bd-4c13-4931-bcee-926538cdefec.jpg',5,0),(14,'b06b333b-23bc-4ed5-8174-6fa29bcf179e.jpg',5,0),(15,'1087a32d-fa4f-4425-9c22-f1c719946a07.jpg',5,0),(23,'00367312-4909-4f5e-ba5a-441c448c864e.jpg',9,0),(24,'82589afb-f8aa-44ee-ae92-42b8dcb6e977.jpg',9,0),(25,'18003f14-c1de-4ff9-b455-4e655c6cfe4b.jpg',9,0);
 /*!40000 ALTER TABLE `image` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -199,7 +200,7 @@ CREATE TABLE `ingredient` (
   `description` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `FK_material_unit` FOREIGN KEY (`id`) REFERENCES `unit` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -208,7 +209,7 @@ CREATE TABLE `ingredient` (
 
 LOCK TABLES `ingredient` WRITE;
 /*!40000 ALTER TABLE `ingredient` DISABLE KEYS */;
-INSERT INTO `ingredient` VALUES (1,'Lá khúc',6,0,0,'Để làm bánh khúc'),(2,'ýtest dek',3,1,0,'');
+INSERT INTO `ingredient` VALUES (1,'Lá khúc',6,0,0,'Để làm bánh khúc'),(2,'ýtest dek',3,1,0,''),(3,'Gạo nếp',6,0,0,''),(4,'Khoai tây',6,0,0,''),(5,'Trứng',7,0,0,''),(6,'Bột mì',6,0,0,'Làm bánh');
 /*!40000 ALTER TABLE `ingredient` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -255,7 +256,7 @@ CREATE TABLE `product` (
   PRIMARY KEY (`id`),
   KEY `FK_product_unit_idx` (`idUnit`),
   CONSTRAINT `FK_product_unit` FOREIGN KEY (`idUnit`) REFERENCES `unit` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -264,6 +265,7 @@ CREATE TABLE `product` (
 
 LOCK TABLES `product` WRITE;
 /*!40000 ALTER TABLE `product` DISABLE KEYS */;
+INSERT INTO `product` VALUES (5,'Bánh khúc','Ai bánh khúc nóng đêy',4,15000.00,0),(9,'Bánh sinh nhật','HAPPY BIRTHDAY!!!',4,400000.00,0);
 /*!40000 ALTER TABLE `product` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -292,6 +294,7 @@ CREATE TABLE `product_ingredient` (
 
 LOCK TABLES `product_ingredient` WRITE;
 /*!40000 ALTER TABLE `product_ingredient` DISABLE KEYS */;
+INSERT INTO `product_ingredient` VALUES (5,1,100,0),(5,3,200,0),(5,4,100,0),(9,5,5,0),(9,6,800,0);
 /*!40000 ALTER TABLE `product_ingredient` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -319,6 +322,7 @@ CREATE TABLE `product_type` (
 
 LOCK TABLES `product_type` WRITE;
 /*!40000 ALTER TABLE `product_type` DISABLE KEYS */;
+INSERT INTO `product_type` VALUES (5,2,0),(5,5,0),(9,1,0),(9,3,0);
 /*!40000 ALTER TABLE `product_type` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -389,7 +393,7 @@ CREATE TABLE `unit` (
   `description` varchar(255) DEFAULT NULL,
   `isDeleted` int(11) DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -398,7 +402,7 @@ CREATE TABLE `unit` (
 
 LOCK TABLES `unit` WRITE;
 /*!40000 ALTER TABLE `unit` DISABLE KEYS */;
-INSERT INTO `unit` VALUES (1,'Chiếc','1 chiếc (nhỏ), giống cái',1),(2,'Hộp','5 cái',0),(3,'Túi','Chắc là theo gram',0),(4,'Cái','Đơn vị tính riêng lẻ',0),(5,'Gram','Đơn vị tính khối lượng 1 g = 0.001kg',1),(6,'Gram','Đơn vị tính khối lượng 1 g = 0.001kg',0);
+INSERT INTO `unit` VALUES (1,'Chiếc','1 chiếc (nhỏ), giống cái',1),(2,'Hộp','5 cái',0),(3,'Túi','Chắc là theo gram',0),(4,'Cái','Đơn vị tính riêng lẻ',0),(5,'Gram','Đơn vị tính khối lượng 1 g = 0.001kg',1),(6,'Gram','Đơn vị tính khối lượng 1 g = 0.001kg',0),(7,'Quả','',0);
 /*!40000 ALTER TABLE `unit` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -445,4 +449,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-05-02 17:27:21
+-- Dump completed on 2020-05-03 22:48:01

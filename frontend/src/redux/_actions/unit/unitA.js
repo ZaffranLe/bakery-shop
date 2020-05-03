@@ -27,7 +27,6 @@ function getUnits() {
             const resp = await _callApi();
             dispatch(_succeed(resp.data));
         } catch (e) {
-            toast.error("Có lỗi xảy ra khi lấy danh sách đơn vị tính!");
             dispatch(_failed());
             console.error(e);
         }

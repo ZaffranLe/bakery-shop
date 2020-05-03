@@ -1,6 +1,6 @@
 import React from "react";
 import { Router } from "react-router-dom";
-import { Route } from "react-router";
+import { Route, Switch } from "react-router";
 import { history } from "./history";
 import HomePage from "../pages/home-page/index";
 import AdminPanel from "../pages/admin-panel/admin-panel";
@@ -39,60 +39,71 @@ class Routes extends React.Component {
         const { user } = this.props;
         return (
             <Router history={history}>
-                <Route exact path="/" render={() => <HomePage />} />
-                <Route
-                    exact
-                    path="/admin-panel"
-                    render={() =>
-                        user && user.permissionName == _var.permission.admin ? <AdminPanel /> : <FailAccess />
-                    }
-                />
-                <Route
-                    exact
-                    path="/admin-panel/permission"
-                    render={() =>
-                        user && user.permissionName == _var.permission.admin ? <Permission /> : <FailAccess />
-                    }
-                />
-                <Route
-                    exact
-                    path="/admin-panel/export-receipt/status"
-                    render={() =>
-                        user && user.permissionName == _var.permission.admin ? <ExportReceiptStatus /> : <FailAccess />
-                    }
-                />
-                <Route
-                    exact
-                    path="/admin-panel/product/type"
-                    render={() =>
-                        user && user.permissionName == _var.permission.admin ? <ProductType /> : <FailAccess />
-                    }
-                />
-                <Route
-                    exact
-                    path="/admin-panel/unit"
-                    render={() => (user && user.permissionName == _var.permission.admin ? <Unit /> : <FailAccess />)}
-                />
-                <Route
-                    exact
-                    path="/admin-panel/user"
-                    render={() => (user && user.permissionName == _var.permission.admin ? <User /> : <FailAccess />)}
-                />
-                <Route
-                    exact
-                    path="/admin-panel/provider"
-                    render={() =>
-                        user && user.permissionName == _var.permission.admin ? <Provider /> : <FailAccess />
-                    }
-                />
-                <Route
-                    exact
-                    path="/admin-panel/ingredient"
-                    render={() =>
-                        user && user.permissionName == _var.permission.admin ? <Ingredient /> : <FailAccess />
-                    }
-                />
-                <Route exact path="/product" render={() => <Product />} />
+                <Switch>
+                    <Route
+                        exact
+                        path="/admin-panel/permission"
+                        render={() =>
+                            user && user.permissionName == _var.permission.admin ? <Permission /> : <FailAccess />
+                        }
+                    />
+                    <Route
+                        exact
+                        path="/admin-panel/export-receipt/status"
+                        render={() =>
+                            user && user.permissionName == _var.permission.admin ? (
+                                <ExportReceiptStatus />
+                            ) : (
+                                <FailAccess />
+                            )
+                        }
+                    />
+                    <Route
+                        exact
+                        path="/admin-panel/product/type"
+                        render={() =>
+                            user && user.permissionName == _var.permission.admin ? <ProductType /> : <FailAccess />
+                        }
+                    />
+                    <Route
+                        exact
+                        path="/admin-panel/unit"
+                        render={() =>
+                            user && user.permissionName == _var.permission.admin ? <Unit /> : <FailAccess />
+                        }
+                    />
+                    <Route
+                        exact
+                        path="/admin-panel/user"
+                        render={() =>
+                            user && user.permissionName == _var.permission.admin ? <User /> : <FailAccess />
+                        }
+                    />
+                    <Route
+                        exact
+                        path="/admin-panel/provider"
+                        render={() =>
+                            user && user.permissionName == _var.permission.admin ? <Provider /> : <FailAccess />
+                        }
+                    />
+                    <Route
+                        exact
+                        path={`/admin-panel/ingredient`}
+                        render={() =>
+                            user && user.permissionName == _var.permission.admin ? <Ingredient /> : <FailAccess />
+                        }
+                    />
+                    <Route exact path="/product" render={() => <Product />} />
+                    <Route
+                        exact
+                        path="/admin-panel"
+                        render={() =>
+                            user && user.permissionName == _var.permission.admin ? <AdminPanel /> : <FailAccess />
+                        }
+                    />
+                    <Route exact path="/" render={() => <HomePage />} />
+                    <Route path="*" render={() => <FailAccess />} />
+                </Switch>
             </Router>
         );
     }

@@ -1,8 +1,7 @@
 import React from "react";
 import { Grid, Icon, Segment, Header, Menu, Button, Dropdown } from "semantic-ui-react";
-import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
-import { Carousel } from "react-responsive-carousel";
 import _var from "../../utils/_var";
+import Carousel from "../../components/carousel/carousel";
 
 class HomePage extends React.Component {
     constructor(props) {
@@ -12,21 +11,7 @@ class HomePage extends React.Component {
     render() {
         return (
             <>
-                <Grid.Row>
-                    <Grid.Column width={16}>
-                        <Carousel>
-                            <div>
-                                <img src={`${_var.domain_server}/public/img/banner1.jpg`} />
-                            </div>
-                            <div>
-                                <img src={`${_var.domain_server}/public/img/banner2.jpg`} />
-                            </div>
-                            <div>
-                                <img src={`${_var.domain_server}/public/img/banner3.jpg`} />
-                            </div>
-                        </Carousel>
-                    </Grid.Column>
-                </Grid.Row>
+                <Carousel />
                 <Grid.Row centered divided>
                     <Grid.Column width={3}>
                         <Icon color="orange" size="huge" name="gem" />
