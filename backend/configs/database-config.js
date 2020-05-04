@@ -6,8 +6,8 @@ config.development = {
     mysql: {
         connectionLimit: 500,
         host: "localhost",
-        user: "bakeryAdmin",
-        password: "admin",
+        user: "root",
+        password: "root",
         port: 3306,
         database: "bakery"
     }
