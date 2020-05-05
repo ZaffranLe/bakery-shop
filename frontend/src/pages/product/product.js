@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import ProductCard from "./product-card";
 import Carousel from "../../components/carousel/carousel";
 import _var from "../../utils/_var";
+import { v4 } from "uuid";
 
 class UpdateModal extends React.Component {
     constructor(props) {
@@ -23,10 +24,9 @@ class UpdateModal extends React.Component {
             types: [],
             typeObjArr: [],
             typeOptions: [],
-            images: [],
             imageObjArr: [],
             filesPreview: [],
-            fileBase64Arr: [],
+            fileBase64ObjArr: [],
             ingredientOptions: [],
             ingredientObjArr: [],
             currentIngredient: 1,
@@ -83,13 +83,21 @@ class UpdateModal extends React.Component {
                 });
                 selectedIngredients.push(ingredientOptions.splice(ingredientOptions.indexOf(existIngredientOption), 1));
             }
+            const imageObjArr = [];
+            for (let image of product.images.split(";")) {
+                imageObjArr.push({
+                    isCreated: false,
+                    isDeleted: false,
+                    name: image,
+                });
+            }
             this.setState({
                 ...product,
                 types: product.idTypes.split(";").map((type) => parseInt(type)),
-                images: product.images.split(";"),
                 ingredientObjArr,
                 ingredientOptions,
                 selectedIngredients,
+                imageObjArr,
             });
         }
 
@@ -102,8 +110,7 @@ class UpdateModal extends React.Component {
                 unitPrice: "",
                 types: [],
                 ingredients: [],
-                images: [],
-                fileBase64Arr: [],
+                fileBase64ObjArr: [],
                 filesPreview: [],
                 selectedIngredients: [],
                 typeObjArr: [],
@@ -129,7 +136,16 @@ class UpdateModal extends React.Component {
     };
 
     handleSaveProduct = () => {
-        const { name, description, idUnit, unitPrice, types, ingredientObjArr, fileBase64Arr, images } = this.state;
+        const {
+            name,
+            description,
+            idUnit,
+            unitPrice,
+            types,
+            ingredientObjArr,
+            fileBase64ObjArr,
+            imageObjArr,
+        } = this.state;
         const info = {
             name,
             description,
@@ -137,8 +153,8 @@ class UpdateModal extends React.Component {
             unitPrice,
             types,
             ingredientObjArr,
-            fileBase64Arr,
-            images,
+            fileBase64ObjArr,
+            imageObjArr,
         };
         this.props.onSave(info);
     };
@@ -151,13 +167,20 @@ class UpdateModal extends React.Component {
 
     handleUploadFiles = (e) => {
         const filesPreview = [];
-        const fileBase64Arr = [];
+        const fileBase64ObjArr = [];
         for (let file of e.target.files) {
-            filesPreview.push(URL.createObjectURL(file));
+            const name = v4();
+            filesPreview.push({
+                url: URL.createObjectURL(file),
+                name,
+            });
             const reader = new FileReader();
             reader.readAsDataURL(file);
             reader.onload = function () {
-                fileBase64Arr.push(reader.result);
+                fileBase64ObjArr.push({
+                    base64: reader.result,
+                    name,
+                });
             };
             reader.onerror = function (error) {
                 toast.error("Upload ảnh lỗi!");
@@ -165,7 +188,7 @@ class UpdateModal extends React.Component {
         }
         this.setState({
             filesPreview,
-            fileBase64Arr,
+            fileBase64ObjArr,
         });
     };
 
@@ -224,6 +247,28 @@ class UpdateModal extends React.Component {
         }
     };
 
+    handleDeleteImage = (type, name) => {
+        if (type == "old") {
+            const imageObjArr = [...this.state.imageObjArr];
+            const deletedImage = imageObjArr.find((img) => img.name == name);
+            deletedImage.isDeleted = true;
+            this.setState({
+                imageObjArr,
+            });
+        } else {
+            const fileBase64ObjArr = [...this.state.fileBase64ObjArr];
+            const filesPreview = [...this.state.filesPreview];
+            const deletedFileBase64 = fileBase64ObjArr.find((file) => file.name == name);
+            fileBase64ObjArr.splice(fileBase64ObjArr.indexOf(deletedFileBase64), 1);
+            const deletedFilePreview = filesPreview.find((file) => file.name == name);
+            filesPreview.splice(filesPreview.indexOf(deletedFilePreview), 1);
+            this.setState({
+                fileBase64ObjArr,
+                filesPreview,
+            });
+        }
+    };
+
     render() {
         const { open, onClose } = this.props;
         const {
@@ -234,7 +279,7 @@ class UpdateModal extends React.Component {
             unitPrice,
             typeOptions,
             types,
-            images,
+            imageObjArr,
             filesPreview,
             currentIngredient,
             currentQuantity,
@@ -287,14 +332,31 @@ class UpdateModal extends React.Component {
                             <Input type="file" fluid multiple onChange={this.handleUploadFiles} accept="image/*" />
                         </Form.Field>
                         <Grid divided>
-                            {images.map((url, idx) => (
+                            {imageObjArr.map((img, idx) => {
+                                if (!img["isDeleted"])
+                                    return (
+                                        <Grid.Column width={4} key={idx}>
+                                            <Button
+                                                color="red"
+                                                inverted
+                                                icon="x"
+                                                floated="right"
+                                                onClick={() => this.handleDeleteImage("old", img["name"])}
+                                            />
+                                            <Image src={`${_var.domain_server}/public/img/${img["name"]}`} />
+                                        </Grid.Column>
+                                    );
+                            })}
+                            {filesPreview.map((file, idx) => (
                                 <Grid.Column width={4} key={idx}>
-                                    <Image src={`${_var.domain_server}/public/img/${url}`} />
-                                </Grid.Column>
-                            ))}
-                            {filesPreview.map((url, idx) => (
-                                <Grid.Column width={4} key={idx}>
-                                    <Image src={url} />
+                                    <Button
+                                        color="red"
+                                        inverted
+                                        icon="x"
+                                        floated="right"
+                                        onClick={() => this.handleDeleteImage("new", file["name"])}
+                                    />
+                                    <Image src={file["url"]} />
                                 </Grid.Column>
                             ))}
                         </Grid>
