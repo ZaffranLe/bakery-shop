@@ -2,15 +2,15 @@ import React from "react";
 import { Grid, Segment, Icon, Button, Card, Image } from "semantic-ui-react";
 import receipt1 from "../../images/receipt1.jpg";
 import receipt2 from "../../images/receipt2.jpg";
-import provider from "../../images/provider.png"
-import product from "../../images/product.jpg"
-import ingredient from "../../images/ingredient.png"
-import storage from "../../images/storage.png"
-import unit from "../../images/unit.png"
-import category from "../../images/category.png"
-import status from "../../images/status.png"
-import user from "../../images/user.png"
-import permission from "../../images/permission.png"
+import provider from "../../images/provider.png";
+import product from "../../images/product.jpg";
+import ingredient from "../../images/ingredient.png";
+import storage from "../../images/storage.png";
+import unit from "../../images/unit.png";
+import category from "../../images/category.png";
+import status from "../../images/status.png";
+import user from "../../images/user.png";
+import permission from "../../images/permission.png";
 
 class AdminPanel extends React.Component {
     constructor(props) {
@@ -26,8 +26,8 @@ class AdminPanel extends React.Component {
     };
 
     rowStyle = {
-        marginTop: 15
-    }
+        marginTop: 15,
+    };
 
     render() {
         return (
@@ -127,16 +127,6 @@ class AdminPanel extends React.Component {
                                     </Grid.Row>
                                     <Grid.Row style={this.rowStyle}>
                                         <Grid.Column width={16}>
-                                            <Card href="#" fluid>
-                                                <Image src={storage} wrapped ui={false} />
-                                                <Card.Content>
-                                                    <Card.Header textAlign="center">Kho nguyên liệu</Card.Header>
-                                                </Card.Content>
-                                            </Card>
-                                        </Grid.Column>
-                                    </Grid.Row>
-                                    <Grid.Row style={this.rowStyle}>
-                                        <Grid.Column width={16}>
                                             <Card href="/admin-panel/export-receipt/status" fluid>
                                                 <Image src={status} wrapped ui={false} />
                                                 <Card.Content>
@@ -183,6 +173,9 @@ class AdminPanel extends React.Component {
                         </p>
                         <p>
                             <Icon name="truck" /> Số đơn hàng đang vận chuyển: placeholder
+                        </p>
+                        <p>
+                            <Icon name="box" /> Số lượng nguyên liệu còn dưới 100 đơn vị: placeholder
                         </p>
                     </Segment>
                 </Grid.Column>

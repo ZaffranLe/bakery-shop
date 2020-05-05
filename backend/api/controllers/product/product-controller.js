@@ -46,7 +46,7 @@ async function createProduct(req, res) {
             idUnit,
             unitPrice,
             types,
-            ingredients,
+            ingredientObjArr,
             fileNames,
         };
         await mysqlProduct.createProduct(info);

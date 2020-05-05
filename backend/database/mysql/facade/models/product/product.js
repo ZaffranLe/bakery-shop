@@ -10,7 +10,7 @@ async function getProducts() {
     const query = `SELECT t1.id, t1.name, t1.description, t1.unitPrice, t1.idUnit, t2.name AS unit,
                    (SELECT GROUP_CONCAT(t3.idType SEPARATOR ';') FROM product_type t3 WHERE t1.id = t3.idProduct) as idTypes,
                    (SELECT GROUP_CONCAT(t4.name SEPARATOR ';') FROM image t4 WHERE t1.id = t4.idProduct) as images,
-                   (SELECT GROUP_CONCAT(t5.idIngredient SEPARATOR ';') FROM product_ingredient t5 WHERE t1.id = t5.idProduct) as idIngredients
+                   (SELECT GROUP_CONCAT(CONCAT(t5.idIngredient,"-",t5.amount) SEPARATOR ';') FROM product_ingredient t5 WHERE t1.id = t5.idProduct) as ingredients
                    FROM product t1
                    JOIN unit t2 ON t1.idUnit = t2.id`;
     return await db.query(query, []);
@@ -46,12 +46,12 @@ async function createProduct(info) {
                 await db.transactionQuery(con, insertTypesQuery, [typeData]);
             }
         }
-        if (info["ingredients"].length > 0) {
+        if (info["ingredientObjArr"].length > 0) {
             const insertIngredientsQuery = `INSERT INTO product_ingredient SET ?`;
             for (let ingredient of info["ingredients"]) {
                 const ingredientData = {
                     idProduct: result.insertId,
-                    idIngredient: ingredient["id"],
+                    idIngredient: ingredient["idIngredient"],
                     amount: ingredient["amount"],
                     isDeleted: 0,
                 };

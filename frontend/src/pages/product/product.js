@@ -3,11 +3,12 @@ import { ProductActions } from "../../redux/_actions/product/productA";
 import { IngredientActions } from "../../redux/_actions/ingredient/ingredientA";
 import { UnitActions } from "../../redux/_actions/unit/unitA";
 import { ProductTypeActions } from "../../redux/_actions/product/typeA";
-import { connect } from "react-redux";
+import { connect, useSelector } from "react-redux";
 import { Segment, Header, Dimmer, Loader, Button, Grid, Modal, Input, Form, Dropdown, Image } from "semantic-ui-react";
 import { toast } from "react-toastify";
 import ProductCard from "./product-card";
 import Carousel from "../../components/carousel/carousel";
+import _var from "../../utils/_var";
 
 class UpdateModal extends React.Component {
     constructor(props) {
@@ -17,27 +18,78 @@ class UpdateModal extends React.Component {
             name: "",
             description: "",
             idUnit: "",
+            unitOptions: [],
             unitPrice: "",
             types: [],
-            ingredients: [],
-            currentIngredient: 1,
-            currentQuantity: "",
-            unitOptions: [],
+            typeObjArr: [],
             typeOptions: [],
-            ingredientOptions: [],
             images: [],
+            imageObjArr: [],
             filesPreview: [],
             fileBase64Arr: [],
+            ingredientOptions: [],
+            ingredientObjArr: [],
+            currentIngredient: 1,
+            currentQuantity: "",
             selectedIngredients: [],
         };
     }
 
     componentWillReceiveProps(nextProps) {
         const { open, product, types, units, ingredients } = nextProps;
-        const { id, typeOptions, unitOptions, ingredientOptions } = this.state;
+        const { id } = this.state;
+
+        if (this.state.typeOptions.length != types.length) {
+            this.setState({
+                typeOptions: this.setOptions(types),
+            });
+        }
+
+        if (this.state.unitOptions.length != units.length) {
+            this.setState({
+                unitOptions: this.setOptions(units),
+            });
+        }
+
+        if (this.state.ingredientOptions.length != ingredients.length) {
+            const options = [];
+            for (let ingredient of ingredients) {
+                options.push({
+                    key: ingredient["id"],
+                    value: ingredient["id"],
+                    text: `${ingredient["name"]} - ${ingredient["unit"]}`,
+                });
+            }
+            this.setState({
+                ingredientOptions: options,
+            });
+        }
+
+        const selectedIngredients = [];
         if (product && !id) {
+            const ingredientOptions = [...this.state.ingredientOptions];
+            const ingredients = product["ingredients"].split(";");
+            const ingredientObjArr = [];
+            for (let ingredient of ingredients) {
+                const ingredientInfo = ingredient.split("-");
+                const existIngredientOption = ingredientOptions.find((i) => i.value == ingredientInfo[0]);
+                ingredientObjArr.push({
+                    isCreated: false,
+                    isModified: false,
+                    isDeleted: false,
+                    idIngredient: ingredientInfo[0],
+                    amount: ingredientInfo[1],
+                    name: existIngredientOption["text"],
+                });
+                selectedIngredients.push(ingredientOptions.splice(ingredientOptions.indexOf(existIngredientOption), 1));
+            }
             this.setState({
                 ...product,
+                types: product.idTypes.split(";").map((type) => parseInt(type)),
+                images: product.images.split(";"),
+                ingredientObjArr,
+                ingredientOptions,
+                selectedIngredients,
             });
         }
 
@@ -50,38 +102,16 @@ class UpdateModal extends React.Component {
                 unitPrice: "",
                 types: [],
                 ingredients: [],
-                currentQuantity: 1,
-                currentIngredient: "",
                 images: [],
                 fileBase64Arr: [],
                 filesPreview: [],
                 selectedIngredients: [],
-            });
-        }
-
-        if (typeOptions.length != types.length) {
-            this.setState({
-                typeOptions: this.setOptions(types),
-            });
-        }
-
-        if (unitOptions.length != units.length) {
-            this.setState({
-                unitOptions: this.setOptions(units),
-            });
-        }
-
-        if (ingredientOptions.length != ingredients.length) {
-            const options = [];
-            for (let ingredient of ingredients) {
-                options.push({
-                    key: ingredient["id"],
-                    value: ingredient["id"],
-                    text: `${ingredient["name"]} - ${ingredient["unit"]}`,
-                });
-            }
-            this.setState({
-                ingredientOptions: options,
+                typeObjArr: [],
+                imageObjArr: [],
+                ingredientObjArr: [],
+                currentQuantity: 1,
+                currentIngredient: "",
+                selectedIngredients: [],
             });
         }
     }
@@ -99,29 +129,16 @@ class UpdateModal extends React.Component {
     };
 
     handleSaveProduct = () => {
-        const {
-            name,
-            description,
-            idUnit,
-            unitPrice,
-            types,
-            ingredients,
-            currentQuantity,
-            currentIngredient,
-            images,
-            fileBase64Arr,
-        } = this.state;
+        const { name, description, idUnit, unitPrice, types, ingredientObjArr, fileBase64Arr, images } = this.state;
         const info = {
             name,
             description,
             idUnit,
             unitPrice,
             types,
-            ingredients,
-            currentQuantity,
-            currentIngredient,
-            images,
+            ingredientObjArr,
             fileBase64Arr,
+            images,
         };
         this.props.onSave(info);
     };
@@ -155,22 +172,30 @@ class UpdateModal extends React.Component {
     handleAddIngredient = () => {
         const { currentIngredient, currentQuantity } = this.state;
         const ingredientOptions = [...this.state.ingredientOptions];
+        const selectedIngredients = [...this.state.selectedIngredients];
+        const ingredientObjArr = [...this.state.ingredientObjArr];
         const selectedIngredient = ingredientOptions.find((e) => e.value === currentIngredient);
         if (selectedIngredient) {
             if (window.confirm("Bạn đồng ý thêm nguyên liệu này vào sản phẩm?")) {
                 const info = {
-                    id: currentIngredient,
+                    idIngredient: currentIngredient,
                     amount: currentQuantity,
                     name: selectedIngredient["text"],
+                    isCreated: true,
+                    isDeleted: false,
+                    isModified: false,
                 };
                 if (selectedIngredient) {
-                    ingredientOptions.splice(ingredientOptions.indexOf(selectedIngredient), 1);
+                    selectedIngredients.push(
+                        ingredientOptions.splice(ingredientOptions.indexOf(selectedIngredient), 1)[0]
+                    );
+                    ingredientObjArr.push(info);
                 }
                 this.setState({
-                    ingredients: [...this.state.ingredients, info],
-                    selectedIngredients: [...this.state.selectedIngredients, selectedIngredient],
-                    ingredientOptions: ingredientOptions,
+                    selectedIngredients,
+                    ingredientOptions,
                     currentQuantity: 1,
+                    ingredientObjArr,
                 });
             }
         } else {
@@ -181,18 +206,20 @@ class UpdateModal extends React.Component {
     handleDeleteIngredient = (id) => {
         if (window.confirm("Bạn có chắc chắn muốn xoá nguyên liệu này?")) {
             const selectedIngredients = [...this.state.selectedIngredients];
-            const ingredients = [...this.state.ingredients];
-            const deletedIngredient = selectedIngredients.findIndex((e) => e.value === id);
-            ingredients.splice(
-                ingredients.findIndex((e) => e.id == id),
-                1
-            );
+            const ingredientObjArr = [...this.state.ingredientObjArr];
+            const ingredientOptions = [...this.state.ingredientOptions];
+            const deletedIngredient = ingredientObjArr.find((ingredient) => ingredient.idIngredient == id);
+            if (deletedIngredient["isCreated"]) {
+                ingredientObjArr.splice(ingredientObjArr.indexOf(deletedIngredient), 1);
+                const deletedOption = selectedIngredients.find((ingredient) => ingredient.value == id);
+                ingredientOptions.push(selectedIngredients.splice(selectedIngredients.indexOf(deletedOption), 1)[0]);
+            } else {
+                deletedIngredient["isDeleted"] = true;
+            }
             this.setState({
-                ingredientOptions: this.state.ingredientOptions.concat(
-                    selectedIngredients.splice(deletedIngredient, 1)
-                ),
                 selectedIngredients,
-                ingredients,
+                ingredientObjArr,
+                ingredientOptions,
             });
         }
     };
@@ -207,12 +234,12 @@ class UpdateModal extends React.Component {
             unitPrice,
             typeOptions,
             types,
-            ingredients,
-            ingredientOptions,
-            currentIngredient,
-            currentQuantity,
             images,
             filesPreview,
+            currentIngredient,
+            currentQuantity,
+            ingredientOptions,
+            ingredientObjArr,
         } = this.state;
         return (
             <Modal open={open} size="large">
@@ -257,16 +284,14 @@ class UpdateModal extends React.Component {
                             />
                         </Form.Field>
                         <Form.Field>
-                            <Input
-                                type="file"
-                                fluid
-                                multiple
-                                value={images}
-                                onChange={this.handleUploadFiles}
-                                accept="image/*"
-                            />
+                            <Input type="file" fluid multiple onChange={this.handleUploadFiles} accept="image/*" />
                         </Form.Field>
                         <Grid divided>
+                            {images.map((url, idx) => (
+                                <Grid.Column width={4} key={idx}>
+                                    <Image src={`${_var.domain_server}/public/img/${url}`} />
+                                </Grid.Column>
+                            ))}
                             {filesPreview.map((url, idx) => (
                                 <Grid.Column width={4} key={idx}>
                                     <Image src={url} />
@@ -310,24 +335,25 @@ class UpdateModal extends React.Component {
                                 />
                             </Form.Field>
                         </Form.Group>
-                        {ingredients.map((ingredient, index) => {
-                            return (
-                                <Form.Group key={index} widths="equal">
-                                    <Form.Field>
-                                        <Input fluid value={ingredient["name"]} label="Tên" readOnly />
-                                    </Form.Field>
-                                    <Form.Field>
-                                        <Input fluid value={ingredient["amount"]} label="Số lượng" readOnly />
-                                    </Form.Field>
-                                    <Form.Field>
-                                        <Button
-                                            color="red"
-                                            icon="trash"
-                                            onClick={() => this.handleDeleteIngredient(ingredient["id"])}
-                                        />
-                                    </Form.Field>
-                                </Form.Group>
-                            );
+                        {ingredientObjArr.map((ingredient, index) => {
+                            if (!ingredient["isDeleted"])
+                                return (
+                                    <Form.Group key={index} widths="equal">
+                                        <Form.Field>
+                                            <Input fluid value={ingredient["name"]} label="Tên" readOnly />
+                                        </Form.Field>
+                                        <Form.Field>
+                                            <Input fluid value={ingredient["amount"]} label="Số lượng" readOnly />
+                                        </Form.Field>
+                                        <Form.Field>
+                                            <Button
+                                                color="red"
+                                                icon="trash"
+                                                onClick={() => this.handleDeleteIngredient(ingredient["idIngredient"])}
+                                            />
+                                        </Form.Field>
+                                    </Form.Group>
+                                );
                         })}
                     </Form>
                 </Modal.Content>
@@ -361,7 +387,7 @@ class Product extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        const { reload, isCreatedSucceed, products, types } = nextProps.ProductReducer;
+        const { reload, isCreatedSucceed, products, types } = nextProps;
         if (isCreatedSucceed) {
             this.handleCloseModal("updateModal");
         }
@@ -433,8 +459,7 @@ class Product extends React.Component {
     };
 
     render() {
-        const { pageLoading, types, ingredients, units } = this.props.ProductReducer;
-        const { user } = this.props.UserReducer;
+        const { pageLoading, types, ingredients, units, user } = this.props;
         const { product, updateModal, productsFiltered, typesFiltered, typeOptions } = this.state;
         return (
             <div>
@@ -465,7 +490,14 @@ class Product extends React.Component {
                                 <Segment>
                                     <Grid>
                                         {productsFiltered.map((product, idx) => {
-                                            return <ProductCard product={product} key={idx} user={user} />;
+                                            return (
+                                                <ProductCard
+                                                    product={product}
+                                                    key={idx}
+                                                    user={user}
+                                                    onClickEdit={this.handleClickEdit}
+                                                />
+                                            );
                                         })}
                                     </Grid>
                                 </Segment>
@@ -492,7 +524,7 @@ class Product extends React.Component {
                                         <Form.Group widths="equal">
                                             <Form.Field>
                                                 <label>Khoảng giá</label>
-                                                <Input icon="angle right" iconPosition="right" />
+                                                <Input icon="angle right" />
                                             </Form.Field>
                                             <Form.Field>
                                                 <label>&nbsp;</label>
@@ -519,9 +551,5 @@ class Product extends React.Component {
     }
 }
 
-const mapStateToProps = ({ ProductReducer, UserReducer }) => ({
-    ProductReducer,
-    UserReducer,
-});
-
+const mapStateToProps = ({ ProductReducer }) => ProductReducer;
 export default connect(mapStateToProps, null)(Product);

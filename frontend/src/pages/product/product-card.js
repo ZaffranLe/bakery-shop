@@ -8,7 +8,7 @@ class ProductCard extends React.Component {
     }
 
     render() {
-        const { product, user } = this.props;
+        const { product, user, onClickEdit } = this.props;
         const images = product["images"].split(";");
         return (
             <Grid.Column width={4}>
@@ -34,7 +34,7 @@ class ProductCard extends React.Component {
                                 labelPosition="left"
                             />
                             {user && user.permissionName == "ADMIN" && (
-                                <Button size="small" icon="edit" color="yellow" />
+                                <Button size="small" icon="edit" color="yellow" onClick={() => onClickEdit(product)} />
                             )}
                         </Card.Description>
                     </Card.Content>

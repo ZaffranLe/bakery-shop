@@ -13,6 +13,9 @@ function getProducts() {
         return axios({
             url: `${_var.domain_server}/api/product`,
             method: "get",
+            headers: {
+                token: window.localStorage.getItem("token"),
+            },
         });
     }
 
@@ -22,9 +25,8 @@ function getProducts() {
             const resp = await _callApi();
             dispatch(_succeed(resp.data));
         } catch (e) {
-            console.error(e);
-            toast.error("Lấy danh sách sản phẩm thất bại");
             dispatch(_failed());
+            console.error(e);
         }
     };
 

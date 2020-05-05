@@ -93,7 +93,7 @@ class Routes extends React.Component {
                             user && user.permissionName == _var.permission.admin ? <Ingredient /> : <FailAccess />
                         }
                     />
-                    <Route exact path="/product" render={() => <Product />} />
+                    <Route exact path="/product" render={() => <Product user={user} />} />
                     <Route
                         exact
                         path="/admin-panel"
