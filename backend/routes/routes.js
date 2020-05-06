@@ -34,6 +34,8 @@ function routes(app) {
         // product
         app.get("/product", productController.getProducts);
         app.post("/product", verifyToken, checkPermission("admin"), productController.createProduct);
+        app.patch("/product/:id", verifyToken, checkPermission("admin"), productController.updateProduct);
+        app.delete("/product/:id", verifyToken, checkPermission("admin"), productController.deleteProduct);
         app.get("/product/type", verifyToken, checkPermission("admin"), productTypeController.getAllType);
         app.get("/product/type/:id", verifyToken, checkPermission("admin"), productTypeController.getType);
         app.post("/product/type", verifyToken, checkPermission("admin"), productTypeController.createType);

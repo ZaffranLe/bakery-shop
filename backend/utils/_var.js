@@ -1,7 +1,7 @@
 module.exports = {
     jwt: {
         tokenSecret: "BAKERY-TUNG154-!%$LS9",
-        tokenLife: "1d",
+        tokenLife: "7d",
         algorithm: 'HS256'
     },
     permission: {

@@ -6,6 +6,8 @@ import { toast } from "react-toastify";
 export const ProductActions = {
     createProduct,
     getProducts,
+    updateProduct,
+    deleteProduct,
 };
 
 function getProducts() {
@@ -89,6 +91,93 @@ function createProduct(info) {
     function _failed() {
         return {
             type: actionTypes.PRODUCT_CREATE_PRODUCT_FAILED,
+        };
+    }
+}
+
+function updateProduct(id, info) {
+    function _callApi(id, info) {
+        return axios({
+            url: `${_var.domain_server}/api/product/${id}`,
+            method: "patch",
+            data: info,
+            headers: {
+                token: window.localStorage.getItem("token"),
+            },
+        });
+    }
+
+    return async (dispatch) => {
+        try {
+            dispatch(_beginAction());
+            await _callApi(id, info);
+            dispatch(_succeed());
+            toast.success("Chỉnh sửa sản phẩm thành công");
+        } catch (e) {
+            console.error(e);
+            toast.error("Chỉnh sửa sản phẩm thất bại");
+            dispatch(_failed());
+        }
+    };
+
+    function _beginAction() {
+        return {
+            type: actionTypes.PRODUCT_UPDATE_PRODUCT,
+        };
+    }
+
+    function _succeed() {
+        return {
+            type: actionTypes.PRODUCT_UPDATE_PRODUCT_SUCCEED,
+        };
+    }
+
+    function _failed() {
+        return {
+            type: actionTypes.PRODUCT_UPDATE_PRODUCT_FAILED,
+        };
+    }
+}
+
+function deleteProduct(id) {
+    function _callApi(id) {
+        return axios({
+            url: `${_var.domain_server}/api/product/${id}`,
+            method: "delete",
+            headers: {
+                token: window.localStorage.getItem("token"),
+            },
+        });
+    }
+
+    return async (dispatch) => {
+        try {
+            dispatch(_beginAction());
+            await _callApi(id);
+            dispatch(_succeed());
+            toast.success("Xoá sản phẩm thành công");
+        } catch (e) {
+            console.error(e);
+            toast.error("Xoá sản phẩm thất bại");
+            dispatch(_failed());
+        }
+    };
+
+    function _beginAction() {
+        return {
+            type: actionTypes.PRODUCT_DELETE_PRODUCT,
+        };
+    }
+
+    function _succeed() {
+        return {
+            type: actionTypes.PRODUCT_DELETE_PRODUCT_SUCCEED,
+        };
+    }
+
+    function _failed() {
+        return {
+            type: actionTypes.PRODUCT_DELETE_PRODUCT_FAILED,
         };
     }
 }

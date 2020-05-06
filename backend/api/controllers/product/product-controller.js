@@ -7,6 +7,8 @@ const sharp = require("sharp");
 module.exports = {
     getProducts,
     createProduct,
+    updateProduct,
+    deleteProduct,
 };
 
 async function getProducts(req, res) {
@@ -21,11 +23,11 @@ async function getProducts(req, res) {
 
 async function createProduct(req, res) {
     try {
-        const { name, description, idUnit, unitPrice, types, ingredients, fileBase64Arr } = req.body;
+        const { name, description, idUnit, unitPrice, types, ingredientObjArr, fileBase64ObjArr } = req.body;
         const fileNames = [];
-        if (fileBase64Arr.length > 0) {
-            for (let file of fileBase64Arr) {
-                const base64Data = file.split(",")[1];
+        if (fileBase64ObjArr.length > 0) {
+            for (let file of fileBase64ObjArr) {
+                const base64Data = file["base64"].split(",")[1];
                 const img = new Buffer(base64Data, "base64");
                 const resizedImageBuffer = await sharp(img).resize(600, 400).toBuffer();
                 let resizedImageData = resizedImageBuffer.toString("base64");
@@ -53,6 +55,76 @@ async function createProduct(req, res) {
         res.status(201).send();
     } catch (e) {
         console.error("createProduct: ", e);
+        res.status(500).send();
+    }
+}
+
+async function updateProduct(req, res) {
+    try {
+        const { id } = req.params;
+        const {
+            name,
+            description,
+            idUnit,
+            unitPrice,
+            types,
+            ingredientObjArr,
+            fileBase64ObjArr,
+            imageObjArr,
+            typeObjArr,
+        } = req.body;
+        const fileNames = [];
+        if (fileBase64ObjArr.length > 0) {
+            for (let file of fileBase64ObjArr) {
+                const base64Data = file["base64"].split(",")[1];
+                const img = new Buffer(base64Data, "base64");
+                const resizedImageBuffer = await sharp(img).resize(600, 400).toBuffer();
+                let resizedImageData = resizedImageBuffer.toString("base64");
+                const fileName = uuid.v4() + ".jpg";
+                fileNames.push(fileName);
+                fs.writeFileSync(`${__dirname}/../../../public/img/${fileName}`, resizedImageData, "base64", function (
+                    err
+                ) {
+                    if (err) {
+                        throw err;
+                    }
+                });
+            }
+        }
+        const info = {
+            name,
+            description,
+            idUnit,
+            unitPrice,
+            types,
+            ingredientObjArr,
+            fileNames,
+            imageObjArr,
+            typeObjArr,
+        };
+        await mysqlProduct.updateProduct(id, info);
+        for (let image of imageObjArr) {
+            if (image["isDeleted"]) {
+                fs.unlinkSync(`${__dirname}/../../../public/img/${image["name"]}`);
+            }
+        }
+        res.status(200).send();
+    } catch (e) {
+        console.error("updateProduct: ", e);
+        res.status(500).send();
+    }
+}
+
+async function deleteProduct(req, res) {
+    try {
+        const { id } = req.params;
+        const info = {
+            isDeleted: 1,
+        };
+        await mysqlProduct.updateProduct(id, info);
+        res.status(200).send();
+    } catch (e) {
+        console.error("deleteProduct: ", e);
         res.status(500).send();
     }
 }

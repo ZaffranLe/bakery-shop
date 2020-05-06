@@ -86,14 +86,23 @@ class UpdateModal extends React.Component {
             const imageObjArr = [];
             for (let image of product.images.split(";")) {
                 imageObjArr.push({
-                    isCreated: false,
                     isDeleted: false,
                     name: image,
                 });
             }
+            const types = product.idTypes.split(";").map((type) => parseInt(type));
+            const typeObjArr = [];
+            for (let type of types) {
+                typeObjArr.push({
+                    id: type,
+                    isCreated: false,
+                    isDeleted: false,
+                });
+            }
             this.setState({
                 ...product,
-                types: product.idTypes.split(";").map((type) => parseInt(type)),
+                types,
+                typeObjArr,
                 ingredientObjArr,
                 ingredientOptions,
                 selectedIngredients,
@@ -160,8 +169,38 @@ class UpdateModal extends React.Component {
     };
 
     handleChange = (name) => (e, data) => {
+        const newValue = data.value;
+        if (name == "types") {
+            const types = [...this.state.types];
+            const typeObjArr = [...this.state.typeObjArr];
+            if (types.length < newValue.length) {
+                const addedType = newValue.find((type) => types.indexOf(type) === -1);
+                const addedTypeObj = typeObjArr.find((type) => type.id == addedType);
+                if (!addedTypeObj) {
+                    const obj = {
+                        isCreated: true,
+                        isDeleted: false,
+                        id: addedType,
+                    };
+                    typeObjArr.push(obj);
+                } else {
+                    addedTypeObj["isDeleted"] = false;
+                }
+            } else if (types.length > newValue.length) {
+                const deletedType = types.find((type) => newValue.indexOf(type) === -1);
+                const deletedTypeObj = typeObjArr.find((type) => type.id == deletedType);
+                if (deletedTypeObj["isCreated"]) {
+                    typeObjArr.splice(typeObjArr.indexOf(deletedTypeObj), 1);
+                } else {
+                    deletedTypeObj["isDeleted"] = true;
+                }
+            }
+            this.setState({
+                typeObjArr,
+            });
+        }
         this.setState({
-            [name]: data.value,
+            [name]: newValue,
         });
     };
 
@@ -428,9 +467,38 @@ class UpdateModal extends React.Component {
     }
 }
 
+const ORDER_VALUES = {
+    PRICE_ASC: 1,
+    PRICE_DESC: 2,
+    NAME_A_TO_Z: 3,
+    NAME_Z_TO_A: 4,
+};
+
 class Product extends React.Component {
     constructor(props) {
         super(props);
+        const orderOptions = [
+            {
+                key: ORDER_VALUES.PRICE_ASC,
+                value: ORDER_VALUES.PRICE_ASC,
+                text: "Giá tăng dần",
+            },
+            {
+                key: ORDER_VALUES.PRICE_DESC,
+                value: ORDER_VALUES.PRICE_DESC,
+                text: "Giá giảm dần",
+            },
+            {
+                key: ORDER_VALUES.NAME_A_TO_Z,
+                value: ORDER_VALUES.NAME_A_TO_Z,
+                text: "Tên A-Z",
+            },
+            {
+                key: ORDER_VALUES.NAME_Z_TO_A,
+                value: ORDER_VALUES.NAME_Z_TO_A,
+                text: "Tên Z-A",
+            },
+        ];
         this.state = {
             product: "",
             updateModal: false,
@@ -438,6 +506,12 @@ class Product extends React.Component {
             productsFiltered: [],
             typeOptions: [],
             typesFiltered: [],
+            currentName: "",
+            currentTypes: [],
+            lowerPrice: 0,
+            higherPrice: 0,
+            order: "",
+            orderOptions,
         };
     }
 
@@ -475,16 +549,6 @@ class Product extends React.Component {
         }
     }
 
-    handleChangeType = (e, data) => {
-        this.onChange("typesFiltered")(e, data);
-    };
-
-    onChange = (name) => (e, data) => {
-        this.setState({
-            [name]: data.value,
-        });
-    };
-
     handleClickEdit = (product) => {
         this.setState({
             product,
@@ -520,9 +584,106 @@ class Product extends React.Component {
         }
     };
 
+    handleClickDelete = (id) => {
+        if (window.confirm("Bạn có chắc chắn muốn xoá sản phẩm này?")) {
+            this.props.dispatch(ProductActions.deleteProduct(id));
+        }
+    };
+
+    handleChange = (name) => (e, data) => {
+        this.setState({
+            [name]: data.value,
+        });
+    };
+
+    handleSearch = () => {
+        let products = [...this.state.products];
+        const { typesFiltered, currentName, order, lowerPrice, higherPrice } = this.state;
+
+        products = products.filter(
+            (product) =>
+                (product.name.toLowerCase().includes(currentName.trim()) ||
+                    product.description.toLowerCase().includes(currentName.trim())) &&
+                product.unitPrice >= lowerPrice
+        );
+
+        if (higherPrice && higherPrice !== 0) {
+            products = products.filter((product) => product.unitPrice <= higherPrice);
+        }
+
+        if (typesFiltered.length > 0) {
+            products = products.filter((product) => {
+                const productTypes = product.idTypes.split(";").map((type) => parseInt(type));
+                for (let type of typesFiltered) {
+                    if (productTypes.indexOf(type) === -1) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+        }
+
+        switch (order) {
+            case ORDER_VALUES.PRICE_ASC:
+                products = products.sort((a, b) => {
+                    return a.unitPrice - b.unitPrice;
+                });
+                break;
+            case ORDER_VALUES.PRICE_DESC:
+                products = products.sort((a, b) => {
+                    return b.unitPrice - a.unitPrice;
+                });
+                break;
+            case ORDER_VALUES.NAME_A_TO_Z:
+                products = products.sort((a, b) => {
+                    if (a.name.toUpperCase() > b.name.toUpperCase()) {
+                        return 1;
+                    }
+                    return -1;
+                });
+                break;
+            case ORDER_VALUES.NAME_Z_TO_A:
+                products = products.sort((a, b) => {
+                    if (a.name.toUpperCase() > b.name.toUpperCase()) {
+                        return -1;
+                    }
+                    return 1;
+                });
+                break;
+            default:
+                break;
+        }
+
+        this.setState({
+            productsFiltered: products,
+        });
+    };
+
+    handleRefreshFilter = () => {
+        this.setState({
+            typesFiltered: [],
+            currentName: [],
+            lowerPrice: 0,
+            higherPrice: 0,
+            order: "",
+            productsFiltered: [...this.state.products],
+        });
+    };
+
     render() {
         const { pageLoading, types, ingredients, units, user } = this.props;
-        const { product, updateModal, productsFiltered, typesFiltered, typeOptions } = this.state;
+        const {
+            product,
+            updateModal,
+            productsFiltered,
+            typesFiltered,
+            typeOptions,
+            currentName,
+            lowerPrice,
+            higherPrice,
+            order,
+            orderOptions,
+        } = this.state;
         return (
             <div>
                 <Grid.Row>
@@ -558,6 +719,7 @@ class Product extends React.Component {
                                                     key={idx}
                                                     user={user}
                                                     onClickEdit={this.handleClickEdit}
+                                                    onClickDelete={this.handleClickDelete}
                                                 />
                                             );
                                         })}
@@ -570,7 +732,11 @@ class Product extends React.Component {
                                     <Form>
                                         <Form.Field>
                                             <label>Tên</label>
-                                            <Input fluid />
+                                            <Input
+                                                fluid
+                                                value={currentName}
+                                                onChange={this.handleChange("currentName")}
+                                            />
                                         </Form.Field>
                                         <Form.Field>
                                             <label>Loại</label>
@@ -580,17 +746,62 @@ class Product extends React.Component {
                                                 multiple
                                                 value={typesFiltered}
                                                 options={typeOptions}
-                                                onChange={this.handleChangeType}
+                                                onChange={this.handleChange("typesFiltered")}
                                             />
                                         </Form.Field>
                                         <Form.Group widths="equal">
                                             <Form.Field>
                                                 <label>Khoảng giá</label>
-                                                <Input icon="angle right" />
+                                                <Input
+                                                    icon="angle right"
+                                                    onChange={this.handleChange("lowerPrice")}
+                                                    value={lowerPrice}
+                                                    fluid
+                                                    type="number"
+                                                    min={0}
+                                                />
                                             </Form.Field>
                                             <Form.Field>
                                                 <label>&nbsp;</label>
-                                                <Input icon="angle right" iconPosition="left" />
+                                                <Input
+                                                    icon="angle right"
+                                                    iconPosition="left"
+                                                    onChange={this.handleChange("higherPrice")}
+                                                    value={higherPrice}
+                                                    fluid
+                                                    type="number"
+                                                    min={lowerPrice}
+                                                />
+                                            </Form.Field>
+                                        </Form.Group>
+                                        <Form.Field>
+                                            <label>Sắp xếp</label>
+                                            <Dropdown
+                                                selection
+                                                value={order}
+                                                onChange={this.handleChange("order")}
+                                                options={orderOptions}
+                                            />
+                                        </Form.Field>
+                                        <Form.Group widths="equal">
+                                            <Form.Field>
+                                                <Button
+                                                    icon="search"
+                                                    labelPosition="left"
+                                                    content="Tìm kiếm"
+                                                    color="blue"
+                                                    onClick={this.handleSearch}
+                                                    fluid
+                                                />
+                                            </Form.Field>
+                                            <Form.Field>
+                                                <Button
+                                                    onClick={this.handleRefreshFilter}
+                                                    inverted
+                                                    color="brown"
+                                                    content="Làm mới"
+                                                    fluid
+                                                />
                                             </Form.Field>
                                         </Form.Group>
                                     </Form>
