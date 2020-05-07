@@ -12,7 +12,7 @@ class ProductCard extends React.Component {
         const images = product["images"].split(";");
         return (
             <Grid.Column width={4}>
-                <Card centered href="#">
+                <Card centered href={`/product/${product["id"]}`}>
                     <Image src={`${_var.domain_server}/public/img/${images[0]}`} wrapped ui={false} />
                     <Card.Content>
                         <Card.Header>{product["name"]}</Card.Header>

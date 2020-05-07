@@ -691,25 +691,33 @@ class Product extends React.Component {
                         <Dimmer inverted active={pageLoading}>
                             <Loader>Loading...</Loader>
                         </Dimmer>
-                        <Segment>
-                            <Header>
-                                Danh sách sản phẩm
-                                {user && user["permissionName"] == "ADMIN" && (
-                                    <Button
-                                        floated="right"
-                                        icon="plus"
-                                        content="Tạo mới"
-                                        color="green"
-                                        onClick={() => this.handleOpenModal("updateModal")}
-                                    />
-                                )}
-                            </Header>
-                        </Segment>
                         <Grid>
+                            <Grid.Row>
+                                <Grid.Column width={16}>
+                                    <Segment>
+                                        <Carousel />
+                                    </Segment>
+                                </Grid.Column>
+                            </Grid.Row>
+                            <Grid.Row>
+                                <Grid.Column width={16}>
+                                    <Segment>
+                                        <Header>
+                                            Danh sách sản phẩm
+                                            {user && user["permissionName"] == "ADMIN" && (
+                                                <Button
+                                                    floated="right"
+                                                    icon="plus"
+                                                    content="Tạo mới"
+                                                    color="green"
+                                                    onClick={() => this.handleOpenModal("updateModal")}
+                                                />
+                                            )}
+                                        </Header>
+                                    </Segment>
+                                </Grid.Column>
+                            </Grid.Row>
                             <Grid.Column width={12}>
-                                <Segment>
-                                    <Carousel />
-                                </Segment>
                                 <Segment>
                                     <Grid>
                                         {productsFiltered.map((product, idx) => {

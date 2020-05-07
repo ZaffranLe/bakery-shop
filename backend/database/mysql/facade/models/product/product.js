@@ -3,6 +3,7 @@ const _ = require("lodash");
 
 module.exports = {
     getProducts,
+    getProduct,
     createProduct,
     updateProduct,
 };
@@ -16,6 +17,30 @@ async function getProducts() {
                    JOIN unit t2 ON t1.idUnit = t2.id
                    WHERE t1.isDeleted = 0`;
     return await db.query(query, []);
+}
+
+async function getProduct(id) {
+    const productQuery = `SELECT t1.*, t2.name AS unit FROM product t1 JOIN unit t2 ON t1.idUnit = t2.id WHERE t1.id = ?`;
+    const product = await db.query(productQuery, [id]);
+
+    const imagesQuery = `SELECT name FROM image WHERE idProduct = ?`;
+    const images = await db.query(imagesQuery, [id]);
+    const typesQuery = `SELECT t1.name FROM type t1 JOIN product_type t2 ON t1.id = t2.idType WHERE t2.idProduct = ?`;
+    const types = await db.query(typesQuery, [id]);
+    const ingredientsQuery = `SELECT t1.name, t2.name AS unit, t3.amount FROM ingredient t1 
+                              JOIN unit t2 ON t1.idUnit = t2.id 
+                              JOIN product_ingredient t3 ON t1.id = t3.idIngredient
+                              WHERE t3.idProduct = ?`;
+    const ingredients = await db.query(ingredientsQuery, [id]);
+    const result = {
+        images,
+        types,
+        ingredients,
+        product: product[0],
+    };
+    const increaseProductViewQuery = `UPDATE product SET viewNumber = viewNumber +1 WHERE id = ?`;
+    await db.query(increaseProductViewQuery, [id]);
+    return result;
 }
 
 async function createProduct(info) {
@@ -127,7 +152,7 @@ async function updateProduct(id, info) {
                     }
                 }
             }
-            
+
             if (info["typeObjArr"]) {
                 const insertTypeQuery = `INSERT INTO product_type SET ?`;
                 const deleteTypeQuery = `DELETE FROM product_type WHERE idProduct = ? AND idType = ?`;

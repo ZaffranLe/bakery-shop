@@ -32,15 +32,16 @@ function routes(app) {
         app.patch("/export-receipt/status/:id", verifyToken, checkPermission("admin"), exportReceiptController.updateStatus);
         app.delete("/export-receipt/status/:id", verifyToken, checkPermission("admin"), exportReceiptController.deleteStatus);
         // product
-        app.get("/product", productController.getProducts);
-        app.post("/product", verifyToken, checkPermission("admin"), productController.createProduct);
-        app.patch("/product/:id", verifyToken, checkPermission("admin"), productController.updateProduct);
-        app.delete("/product/:id", verifyToken, checkPermission("admin"), productController.deleteProduct);
         app.get("/product/type", verifyToken, checkPermission("admin"), productTypeController.getAllType);
         app.get("/product/type/:id", verifyToken, checkPermission("admin"), productTypeController.getType);
         app.post("/product/type", verifyToken, checkPermission("admin"), productTypeController.createType);
         app.patch("/product/type/:id", verifyToken, checkPermission("admin"), productTypeController.updateType);
         app.delete("/product/type/:id", verifyToken, checkPermission("admin"), productTypeController.deleteType);
+        app.get("/product/:id", productController.getProduct);
+        app.get("/product", productController.getProducts);
+        app.post("/product", verifyToken, checkPermission("admin"), productController.createProduct);
+        app.patch("/product/:id", verifyToken, checkPermission("admin"), productController.updateProduct);
+        app.delete("/product/:id", verifyToken, checkPermission("admin"), productController.deleteProduct);
         // unit
         app.get("/unit", verifyToken, checkPermission("admin"), unitController.getAllUnit);
         app.get("/unit/:id", verifyToken, checkPermission("admin"), unitController.getUnit);

@@ -6,6 +6,7 @@ const sharp = require("sharp");
 
 module.exports = {
     getProducts,
+    getProduct,
     createProduct,
     updateProduct,
     deleteProduct,
@@ -125,6 +126,17 @@ async function deleteProduct(req, res) {
         res.status(200).send();
     } catch (e) {
         console.error("deleteProduct: ", e);
+        res.status(500).send();
+    }
+}
+
+async function getProduct(req, res) {
+    try {
+        const { id } = req.params;
+        const data = await mysqlProduct.getProduct(id);
+        res.json(data);
+    } catch (e) {
+        console.error("getProduct: ", e);
         res.status(500).send();
     }
 }

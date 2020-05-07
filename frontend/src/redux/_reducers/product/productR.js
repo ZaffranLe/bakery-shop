@@ -1,8 +1,9 @@
 import actionTypes from "../../_constants/actionTypes";
 
 const defaultState = {
-    pageLoading: false,
+    pageLoading: true,
     products: [],
+    product: "",
     types: [],
     units: [],
     ingredients: [],
@@ -16,6 +17,7 @@ export default (state = defaultState, action) => {
         case actionTypes.INGREDIENT_GET_INGREDIENTS:
         case actionTypes.UNIT_GET_UNITS:
         case actionTypes.PRODUCT_GET_PRODUCTS:
+        case actionTypes.PRODUCT_GET_PRODUCT:
         case actionTypes.PRODUCT_CREATE_PRODUCT:
         case actionTypes.PRODUCT_UPDATE_PRODUCT:
         case actionTypes.PRODUCT_DELETE_PRODUCT:
@@ -42,6 +44,7 @@ export default (state = defaultState, action) => {
         case actionTypes.PRODUCT_CREATE_PRODUCT_FAILED:
         case actionTypes.PRODUCT_UPDATE_PRODUCT_FAILED:
         case actionTypes.PRODUCT_DELETE_PRODUCT_FAILED:
+        case actionTypes.PRODUCT_GET_PRODUCT_FAILED:
             return {
                 ...state,
                 pageLoading: false,
@@ -79,6 +82,12 @@ export default (state = defaultState, action) => {
                 ...state,
                 pageLoading: false,
                 reload: true,
+            };
+        case actionTypes.PRODUCT_GET_PRODUCT_SUCCEED:
+            return {
+                ...state,
+                pageLoading: false,
+                product: action.data,
             };
         default:
             return state;

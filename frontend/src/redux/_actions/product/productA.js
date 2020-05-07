@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 export const ProductActions = {
     createProduct,
     getProducts,
+    getProduct,
     updateProduct,
     deleteProduct,
 };
@@ -181,3 +182,44 @@ function deleteProduct(id) {
         };
     }
 }
+
+function getProduct(id) {
+    function _callApi(id) {
+        return axios({
+            url: `${_var.domain_server}/api/product/${id}`,
+            method: "get",
+        });
+    }
+
+    return async (dispatch) => {
+        try {
+            dispatch(_beginAction());
+            const resp = await _callApi(id);
+            dispatch(_succeed(resp.data));
+        } catch (e) {
+            console.error(e);
+            toast.error("Lấy sản phẩm thất bại");
+            dispatch(_failed());
+        }
+    };
+
+    function _beginAction() {
+        return {
+            type: actionTypes.PRODUCT_GET_PRODUCT,
+        };
+    }
+
+    function _succeed(data) {
+        return {
+            type: actionTypes.PRODUCT_GET_PRODUCT_SUCCEED,
+            data
+        };
+    }
+
+    function _failed() {
+        return {
+            type: actionTypes.PRODUCT_GET_PRODUCT_FAILED,
+        };
+    }
+}
+

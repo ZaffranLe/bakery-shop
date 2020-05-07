@@ -8,6 +8,7 @@ import Permission from "../pages/permission/permission";
 import ExportReceiptStatus from "../pages/export-receipt/status-management";
 import ProductType from "../pages/product/type-management";
 import Product from "../pages/product/product";
+import ProductInfo from "../pages/product/product-info";
 import Unit from "../pages/unit/unit";
 import Provider from "../pages/provider/provider";
 import User from "../pages/user/user";
@@ -93,6 +94,7 @@ class Routes extends React.Component {
                             user && user.permissionName == _var.permission.admin ? <Ingredient /> : <FailAccess />
                         }
                     />
+                    <Route exact path="/product/:id" render={(props) => <ProductInfo id={props.match.params.id} />} />
                     <Route exact path="/product" render={() => <Product user={user} />} />
                     <Route
                         exact
