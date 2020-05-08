@@ -11,6 +11,7 @@ import category from "../../images/category.png";
 import status from "../../images/status.png";
 import user from "../../images/user.png";
 import permission from "../../images/permission.png";
+import { Link } from "react-router-dom";
 
 class AdminPanel extends React.Component {
     constructor(props) {
@@ -39,7 +40,7 @@ class AdminPanel extends React.Component {
                                 <Grid.Column>
                                     <Grid.Row style={this.rowStyle}>
                                         <Grid.Column width={16}>
-                                            <Card href="#" fluid>
+                                            <Card as={Link} to="#" fluid>
                                                 <Image src={receipt1} wrapped ui={false} />
                                                 <Card.Content>
                                                     <Card.Header textAlign="center">Hoá đơn bán hàng</Card.Header>
@@ -49,7 +50,7 @@ class AdminPanel extends React.Component {
                                     </Grid.Row>
                                     <Grid.Row style={this.rowStyle}>
                                         <Grid.Column width={16}>
-                                            <Card href="/product" fluid>
+                                            <Card as={Link} to="/product" fluid>
                                                 <Image src={product} wrapped ui={false} />
                                                 <Card.Content>
                                                     <Card.Header textAlign="center">Sản phẩm</Card.Header>
@@ -59,7 +60,7 @@ class AdminPanel extends React.Component {
                                     </Grid.Row>
                                     <Grid.Row style={this.rowStyle}>
                                         <Grid.Column width={16}>
-                                            <Card href="/admin-panel/unit" fluid>
+                                            <Card as={Link} to="/admin-panel/unit" fluid>
                                                 <Image src={unit} wrapped ui={false} />
                                                 <Card.Content>
                                                     <Card.Header textAlign="center">Đơn vị tính</Card.Header>
@@ -71,19 +72,17 @@ class AdminPanel extends React.Component {
                                 <Grid.Column>
                                     <Grid.Row style={this.rowStyle}>
                                         <Grid.Column width={16}>
-                                            <Card href="#" fluid>
+                                            <Card as={Link} to="#" fluid>
                                                 <Image src={receipt2} wrapped ui={false} />
                                                 <Card.Content>
-                                                    <Card.Header textAlign="center">
-                                                        Hoá đơn nhập nguyên liệu
-                                                    </Card.Header>
+                                                    <Card.Header textAlign="center">Hoá đơn nhập nguyên liệu</Card.Header>
                                                 </Card.Content>
                                             </Card>
                                         </Grid.Column>
                                     </Grid.Row>
                                     <Grid.Row style={this.rowStyle}>
                                         <Grid.Column width={16}>
-                                            <Card href="/admin-panel/ingredient" fluid>
+                                            <Card as={Link} to="/admin-panel/ingredient" fluid>
                                                 <Image src={ingredient} wrapped ui={false} />
                                                 <Card.Content>
                                                     <Card.Header textAlign="center">Danh sách nguyên liệu</Card.Header>
@@ -93,7 +92,7 @@ class AdminPanel extends React.Component {
                                     </Grid.Row>
                                     <Grid.Row style={this.rowStyle}>
                                         <Grid.Column width={16}>
-                                            <Card href="/admin-panel/product/type" fluid>
+                                            <Card as={Link} to="/admin-panel/product/type" fluid>
                                                 <Image src={category} wrapped ui={false} />
                                                 <Card.Content>
                                                     <Card.Header textAlign="center">Thể loại sản phẩm</Card.Header>
@@ -103,7 +102,7 @@ class AdminPanel extends React.Component {
                                     </Grid.Row>
                                     <Grid.Row style={this.rowStyle}>
                                         <Grid.Column width={16}>
-                                            <Card href="/admin-panel/user" fluid>
+                                            <Card as={Link} to="/admin-panel/user" fluid>
                                                 <Image src={user} wrapped ui={false} />
                                                 <Card.Content>
                                                     <Card.Header textAlign="center">Danh sách người dùng</Card.Header>
@@ -115,36 +114,30 @@ class AdminPanel extends React.Component {
                                 <Grid.Column>
                                     <Grid.Row style={this.rowStyle}>
                                         <Grid.Column width={16}>
-                                            <Card href="/admin-panel/provider" fluid>
+                                            <Card as={Link} to="/admin-panel/provider" fluid>
                                                 <Image src={provider} wrapped ui={false} />
                                                 <Card.Content>
-                                                    <Card.Header textAlign="center">
-                                                        Nhà cung cấp nguyên liệu
-                                                    </Card.Header>
+                                                    <Card.Header textAlign="center">Nhà cung cấp nguyên liệu</Card.Header>
                                                 </Card.Content>
                                             </Card>
                                         </Grid.Column>
                                     </Grid.Row>
                                     <Grid.Row style={this.rowStyle}>
                                         <Grid.Column width={16}>
-                                            <Card href="/admin-panel/export-receipt/status" fluid>
+                                            <Card as={Link} to="/admin-panel/export-receipt/status" fluid>
                                                 <Image src={status} wrapped ui={false} />
                                                 <Card.Content>
-                                                    <Card.Header textAlign="center">
-                                                        Danh sách trạng thái đơn hàng
-                                                    </Card.Header>
+                                                    <Card.Header textAlign="center">Danh sách trạng thái đơn hàng</Card.Header>
                                                 </Card.Content>
                                             </Card>
                                         </Grid.Column>
                                     </Grid.Row>
                                     <Grid.Row style={this.rowStyle}>
                                         <Grid.Column width={16}>
-                                            <Card href="/admin-panel/permission" fluid>
+                                            <Card as={Link} to="/admin-panel/permission" fluid>
                                                 <Image src={permission} wrapped ui={false} />
                                                 <Card.Content>
-                                                    <Card.Header textAlign="center">
-                                                        Danh sách quyền hệ thống
-                                                    </Card.Header>
+                                                    <Card.Header textAlign="center">Danh sách quyền hệ thống</Card.Header>
                                                 </Card.Content>
                                             </Card>
                                         </Grid.Column>

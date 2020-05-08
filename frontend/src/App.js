@@ -6,6 +6,7 @@ import { UserActions } from "./redux/_actions/user/userA";
 import LoginModal from "./pages/home-page/modal/login-modal";
 import InfoModal from "./pages/home-page/modal/info-modal";
 import _var from "./utils/_var";
+import { Link, withRouter } from "react-router-dom";
 
 class App extends React.Component {
     constructor(props) {
@@ -60,9 +61,7 @@ class App extends React.Component {
                         <Menu.Menu position="right">
                             <Dropdown item text={`Xin chào ${user.fullName}`}>
                                 <Dropdown.Menu>
-                                    <Dropdown.Item onClick={() => this.handleOpenModal("infoModal")}>
-                                        Thông tin cá nhân
-                                    </Dropdown.Item>
+                                    <Dropdown.Item onClick={() => this.handleOpenModal("infoModal")}>Thông tin cá nhân</Dropdown.Item>
                                     {user.permissionName == _var.permission.admin && (
                                         <Dropdown.Item as="a" href="/admin-panel">
                                             Quản lý cửa hàng
@@ -76,13 +75,7 @@ class App extends React.Component {
                         </Menu.Menu>
                     ) : (
                         <Menu.Item position="right">
-                            <Button
-                                inverted
-                                icon="sign-in"
-                                content="Đăng nhập"
-                                labelPosition="left"
-                                onClick={() => this.handleOpenModal("loginModal")}
-                            />
+                            <Button inverted icon="sign-in" content="Đăng nhập" labelPosition="left" onClick={() => this.handleOpenModal("loginModal")} />
                         </Menu.Item>
                     )}
                 </Menu>
@@ -108,4 +101,4 @@ class App extends React.Component {
 
 const mapStateToProps = ({ UserReducer }) => UserReducer;
 
-export default connect(mapStateToProps, null)(App);
+export default withRouter(connect(mapStateToProps, null)(App));

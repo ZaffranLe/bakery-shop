@@ -51,6 +51,7 @@ async function createProduct(req, res) {
             types,
             ingredientObjArr,
             fileNames,
+            createdDate: new Date()
         };
         await mysqlProduct.createProduct(info);
         res.status(201).send();

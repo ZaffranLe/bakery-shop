@@ -1,6 +1,7 @@
 import React from "react";
 import { Card, Grid, Image, Button, Icon } from "semantic-ui-react";
 import _var from "../../utils/_var";
+import { Link } from "react-router-dom";
 
 class ProductCard extends React.Component {
     constructor(props) {
@@ -12,7 +13,7 @@ class ProductCard extends React.Component {
         const images = product["images"].split(";");
         return (
             <Grid.Column width={4}>
-                <Card centered href={`/product/${product["id"]}`}>
+                <Card centered as={Link} to={`/product/${product["id"]}`}>
                     <Image src={`${_var.domain_server}/public/img/${images[0]}`} wrapped ui={false} />
                     <Card.Content>
                         <Card.Header>{product["name"]}</Card.Header>
