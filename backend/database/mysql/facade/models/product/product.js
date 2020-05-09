@@ -9,7 +9,7 @@ module.exports = {
 };
 
 async function getProducts() {
-    const query = `SELECT t1.id, t1.name, t1.description, t1.unitPrice, t1.idUnit, t2.name AS unit, t1.createdDate,
+    const query = `SELECT t1.id, t1.name, t1.description, t1.unitPrice, t1.idUnit, t2.name AS unit, t1.createdDate, t1.viewNumber,
                    (SELECT GROUP_CONCAT(t3.idType SEPARATOR ';') FROM product_type t3 WHERE t1.id = t3.idProduct) AS idTypes,
                    (SELECT GROUP_CONCAT(t4.name SEPARATOR ';') FROM image t4 WHERE t1.id = t4.idProduct) AS images,
                    (SELECT GROUP_CONCAT(CONCAT(t5.idIngredient,"-",t5.amount) SEPARATOR ';') FROM product_ingredient t5 WHERE t1.id = t5.idProduct) AS ingredients
@@ -32,10 +32,15 @@ async function getProduct(id) {
                               JOIN product_ingredient t3 ON t1.id = t3.idIngredient
                               WHERE t3.idProduct = ?`;
     const ingredients = await db.query(ingredientsQuery, [id]);
+    const commentsQuery = `SELECT t1.content, t1.rating, t1.createdDate, t2.username, t1.idUser FROM comment t1
+                           JOIN user t2 ON t1.idUser = t2.id
+                           WHERE t1.idProduct = ?`;
+    const comments = await db.query(commentsQuery, [id]);
     const result = {
         images,
         types,
         ingredients,
+        comments,
         product: product[0],
     };
     const increaseProductViewQuery = `UPDATE product SET viewNumber = viewNumber +1 WHERE id = ?`;

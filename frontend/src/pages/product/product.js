@@ -10,6 +10,9 @@ import ProductCard from "./product-card";
 import Carousel from "../../components/carousel/carousel";
 import _var from "../../utils/_var";
 import { v4 } from "uuid";
+import Layout from "../../components/layout/layout";
+import Auth from "../../components/auth/auth";
+import { CartActions } from "../../redux/_actions/shopping-cart/cartA";
 
 class UpdateModal extends React.Component {
     constructor(props) {
@@ -35,7 +38,7 @@ class UpdateModal extends React.Component {
         };
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         const { open, product, types, units, ingredients } = nextProps;
         const { id } = this.state;
 
@@ -522,7 +525,7 @@ class Product extends React.Component {
         this.props.dispatch(ProductTypeActions.getTypes());
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         const { reload, isCreatedSucceed, products, types } = nextProps;
         if (isCreatedSucceed) {
             this.handleCloseModal("updateModal");
@@ -670,6 +673,17 @@ class Product extends React.Component {
         });
     };
 
+    addItemToCart = (product) => {
+        const info = {
+            id: product["id"],
+            name: product["name"],
+            unitPrice: product["unitPrice"],
+            unit: product["unit"],
+            image: product["images"].split(";")[0],
+        };
+        this.props.dispatch(CartActions.addProduct(info));
+    };
+
     render() {
         const { pageLoading, types, ingredients, units, user } = this.props;
         const {
@@ -685,7 +699,8 @@ class Product extends React.Component {
             orderOptions,
         } = this.state;
         return (
-            <div>
+            <Layout permission={_var.permission.none}>
+                <Carousel />
                 <Grid.Row>
                     <Grid.Column width={16}>
                         <Dimmer inverted active={pageLoading}>
@@ -695,16 +710,9 @@ class Product extends React.Component {
                             <Grid.Row>
                                 <Grid.Column width={16}>
                                     <Segment>
-                                        <Carousel />
-                                    </Segment>
-                                </Grid.Column>
-                            </Grid.Row>
-                            <Grid.Row>
-                                <Grid.Column width={16}>
-                                    <Segment>
                                         <Header>
                                             Danh sách sản phẩm
-                                            {user && user["permissionName"] == "ADMIN" && (
+                                            <Auth permission={_var.permission.admin}>
                                                 <Button
                                                     floated="right"
                                                     icon="plus"
@@ -712,7 +720,7 @@ class Product extends React.Component {
                                                     color="green"
                                                     onClick={() => this.handleOpenModal("updateModal")}
                                                 />
-                                            )}
+                                            </Auth>
                                         </Header>
                                     </Segment>
                                 </Grid.Column>
@@ -728,6 +736,7 @@ class Product extends React.Component {
                                                     user={user}
                                                     onClickEdit={this.handleClickEdit}
                                                     onClickDelete={this.handleClickDelete}
+                                                    onAddItemToCart={this.addItemToCart}
                                                 />
                                             );
                                         })}
@@ -827,7 +836,7 @@ class Product extends React.Component {
                     ingredients={ingredients}
                     units={units}
                 />
-            </div>
+            </Layout>
         );
     }
 }

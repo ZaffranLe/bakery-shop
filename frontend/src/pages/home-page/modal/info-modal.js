@@ -142,7 +142,7 @@ class InfoModal extends React.Component {
                                     onChange={this.handleChange("phone")}
                                     value={phone}
                                     readOnly={!isUpdating}
-                                    onKeyPress={utils.handleInputPhone}
+                                    onKeyPress={utils.handleInputNumber}
                                 />
                             </Form.Field>
                         </Form.Group>

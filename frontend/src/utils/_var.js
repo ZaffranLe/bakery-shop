@@ -4,10 +4,15 @@ export default {
         admin: "ADMIN",
         user: "USER",
         deliverer: "DELIVERER",
+        none: "NONE",
     },
-    jwt: {
-        tokenSecret: "BAKERY-TUNG154-!%$LS9",
-        tokenLife: "1d",
-        algorithm: "HS256",
+    export_receipt_status: {
+        pending: 1,
+        confirmed: 2,
+        in_progress: 3,
+        waiting_for_delivery: 4,
+        delivering: 5,
+        finished: 6,
+        refused: 7,
     },
 };

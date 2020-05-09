@@ -2,6 +2,7 @@ import React from "react";
 import { Grid, Icon, Segment, Header, Menu, Button, Dropdown } from "semantic-ui-react";
 import _var from "../../utils/_var";
 import Carousel from "../../components/carousel/carousel";
+import Layout from "../../components/layout/layout";
 
 class HomePage extends React.Component {
     constructor(props) {
@@ -10,7 +11,7 @@ class HomePage extends React.Component {
 
     render() {
         return (
-            <>
+            <Layout permission={_var.permission.none}>
                 <Carousel />
                 <Grid.Row centered divided>
                     <Grid.Column width={3}>
@@ -26,14 +27,7 @@ class HomePage extends React.Component {
                         <big>Dễ dàng & Nhanh chóng</big>
                     </Grid.Column>
                 </Grid.Row>
-                <Grid.Row centered>
-                    <Grid.Column width={4} style={{ textAlign: "center" }}>
-                        <Header as="h1">
-                            Sản phẩm nổi bật <Icon name="star" color="brown" />
-                        </Header>
-                    </Grid.Column>
-                </Grid.Row>
-            </>
+            </Layout>
         );
     }
 }

@@ -2,6 +2,7 @@ const loginController = require("../api/controllers/account/login-controller");
 const permissionController = require("../api/controllers/account/permission-controller");
 const productTypeController = require("../api/controllers/product/type-controller");
 const productController = require("../api/controllers/product/product-controller");
+const productCommentController = require("../api/controllers/product/comment-controller");
 const unitController = require("../api/controllers/unit/unit-controller");
 const providerController = require("../api/controllers/provider/provider-controller");
 const ingredientController = require("../api/controllers/ingredient/ingredient-controller");
@@ -31,7 +32,13 @@ function routes(app) {
         app.post("/export-receipt/status", verifyToken, checkPermission("admin"), exportReceiptController.createStatus);
         app.patch("/export-receipt/status/:id", verifyToken, checkPermission("admin"), exportReceiptController.updateStatus);
         app.delete("/export-receipt/status/:id", verifyToken, checkPermission("admin"), exportReceiptController.deleteStatus);
+        app.get("/export-receipt/detail/:id", verifyToken, exportReceiptController.getDetailExportReceipt);
+        app.get("/export-receipt", verifyToken, checkPermission("admin"), exportReceiptController.getAllExportReceipt);
+        app.get("/user-export-receipt", verifyToken, exportReceiptController.getUserExportReceipt);
+        app.post("/export-receipt", exportReceiptController.createExportReceipt);
+        app.patch("/export-receipt/:id", verifyToken, checkPermission("admin"), exportReceiptController.updateExportReceipt);
         // product
+        app.post("/product/comment", verifyToken, productCommentController.createComment);
         app.get("/product/type", verifyToken, checkPermission("admin"), productTypeController.getAllType);
         app.get("/product/type/:id", verifyToken, checkPermission("admin"), productTypeController.getType);
         app.post("/product/type", verifyToken, checkPermission("admin"), productTypeController.createType);

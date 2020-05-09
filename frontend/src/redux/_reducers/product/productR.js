@@ -21,9 +21,16 @@ export default (state = defaultState, action) => {
         case actionTypes.PRODUCT_CREATE_PRODUCT:
         case actionTypes.PRODUCT_UPDATE_PRODUCT:
         case actionTypes.PRODUCT_DELETE_PRODUCT:
+        case actionTypes.PRODUCT_CREATE_COMMENT:
             return {
                 ...state,
                 pageLoading: true,
+            };
+        case actionTypes.PRODUCT_CREATE_COMMENT_SUCCEED:
+            return {
+                ...state,
+                pageLoading: false,
+                reload: true,
             };
         case actionTypes.PRODUCT_GET_TYPES_SUCCEED:
             return {
@@ -44,10 +51,16 @@ export default (state = defaultState, action) => {
         case actionTypes.PRODUCT_CREATE_PRODUCT_FAILED:
         case actionTypes.PRODUCT_UPDATE_PRODUCT_FAILED:
         case actionTypes.PRODUCT_DELETE_PRODUCT_FAILED:
+        case actionTypes.PRODUCT_CREATE_COMMENT_FAILED:
+            return {
+                ...state,
+                pageLoading: false,
+            };
         case actionTypes.PRODUCT_GET_PRODUCT_FAILED:
             return {
                 ...state,
                 pageLoading: false,
+                reload: false,
             };
         case actionTypes.PRODUCT_GET_PRODUCTS_FAILED:
             return {
@@ -88,6 +101,7 @@ export default (state = defaultState, action) => {
                 ...state,
                 pageLoading: false,
                 product: action.data,
+                reload: false,
             };
         default:
             return state;

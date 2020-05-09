@@ -65,7 +65,7 @@ export default class DataTable extends PureComponent {
         };
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         const {data, columns} = nextProps;
         let {searchText, currentPage, itemsPerPage} = this.state;
 

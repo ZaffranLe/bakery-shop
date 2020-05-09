@@ -31,13 +31,14 @@ async function getIngredient(req, res) {
 
 async function createIngredient(req, res) {
     try {
-        const { name, idUnit, description } = req.body;
+        const { name, idUnit, description, warningThreshold } = req.body;
         const info = {
             name,
             idUnit,
             quantity: 0,
             description,
             isDeleted: 0,
+            warningThreshold,
         };
         await mysqlIngredient.createIngredient(info);
         res.status(201).send();
@@ -50,12 +51,13 @@ async function createIngredient(req, res) {
 async function updateIngredient(req, res) {
     try {
         const { id } = req.params;
-        const { name, idUnit, quantity, description } = req.body;
+        const { name, idUnit, quantity, description, warningThreshold } = req.body;
         const info = {
             name,
             idUnit,
             quantity,
             description,
+            warningThreshold,
         };
         await mysqlIngredient.updateIngredient(id, info);
         res.status(200).send();

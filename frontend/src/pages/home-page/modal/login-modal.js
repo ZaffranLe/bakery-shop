@@ -243,7 +243,7 @@ class LoginModal extends React.Component {
                                         onChange={this.onChange("createPhone")}
                                         value={createPhone}
                                         fluid
-                                        onKeyPress={utils.handleInputPhone}
+                                        onKeyPress={utils.handleInputNumber}
                                     />
                                 </Form.Field>
                                 <Form.Field>
