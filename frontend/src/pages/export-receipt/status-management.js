@@ -3,6 +3,8 @@ import DataTable from "../../components/table/DataTable";
 import { ExportReceiptStatusActions } from "../../redux/_actions/export-receipt/statusA";
 import { connect } from "react-redux";
 import { Segment, Header, Dimmer, Loader, Button, Grid, Modal, Input, Form } from "semantic-ui-react";
+import Layout from "../../components/layout/layout";
+import _var from "../../utils/_var";
 
 class UpdateModal extends React.Component {
     constructor(props) {
@@ -14,7 +16,7 @@ class UpdateModal extends React.Component {
         };
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         const { open, status } = nextProps;
         if (status && !this.state.id) {
             this.setState({
@@ -89,7 +91,7 @@ class ExportReceiptStatus extends React.Component {
         this.props.dispatch(ExportReceiptStatusActions.getStatusList());
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         const { reload, isCreatedSucceed } = nextProps;
         if (isCreatedSucceed) {
             this.handleCloseModal("updateModal");
@@ -168,34 +170,36 @@ class ExportReceiptStatus extends React.Component {
         const { pageLoading, statusList } = this.props;
         const { status, updateModal } = this.state;
         return (
-            <Grid.Row>
-                <Grid.Column width={16}>
-                    <Dimmer inverted active={pageLoading}>
-                        <Loader>Loading...</Loader>
-                    </Dimmer>
-                    <Segment>
-                        <Header>
-                            Danh sách trạng thái đơn hàng
-                            <Button
-                                floated="right"
-                                icon="plus"
-                                content="Tạo mới"
-                                color="green"
-                                onClick={() => this.handleOpenModal("updateModal")}
-                            />
-                        </Header>
-                    </Segment>
-                    <Segment>
-                        <DataTable data={statusList} indexColumn={true} columns={this.columns} key="id" />
-                    </Segment>
-                </Grid.Column>
-                <UpdateModal
-                    status={status}
-                    open={updateModal}
-                    onClose={this.handleCloseModal}
-                    onSave={this.handleSaveStatus}
-                />
-            </Grid.Row>
+            <Layout permission={_var.permission.admin}>
+                <Grid.Row>
+                    <Grid.Column width={16}>
+                        <Dimmer inverted active={pageLoading}>
+                            <Loader>Loading...</Loader>
+                        </Dimmer>
+                        <Segment>
+                            <Header>
+                                Danh sách trạng thái đơn hàng
+                                <Button
+                                    floated="right"
+                                    icon="plus"
+                                    content="Tạo mới"
+                                    color="green"
+                                    onClick={() => this.handleOpenModal("updateModal")}
+                                />
+                            </Header>
+                        </Segment>
+                        <Segment>
+                            <DataTable data={statusList} indexColumn={true} columns={this.columns} key="id" />
+                        </Segment>
+                    </Grid.Column>
+                    <UpdateModal
+                        status={status}
+                        open={updateModal}
+                        onClose={this.handleCloseModal}
+                        onSave={this.handleSaveStatus}
+                    />
+                </Grid.Row>
+            </Layout>
         );
     }
 }

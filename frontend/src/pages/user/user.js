@@ -18,6 +18,8 @@ import { UserActions } from "../../redux/_actions/user/userA";
 import { PermissionActions } from "../../redux/_actions/user/permissionA";
 import { connect } from "react-redux";
 import { utils } from "../../utils/_common-functions";
+import Layout from "../../components/layout/layout";
+import _var from "../../utils/_var";
 
 class UpdateModal extends React.Component {
     constructor(props) {
@@ -125,7 +127,6 @@ class UpdateModal extends React.Component {
         this.props.onCheckUsername(createUsername);
     };
 
-
     render() {
         const { open, onClose, pageLoading, isUsernameValid, isCheckingUsername } = this.props;
         const {
@@ -221,7 +222,7 @@ class UpdateModal extends React.Component {
                                     onChange={this.onChange("createPhone")}
                                     value={createPhone}
                                     fluid
-                                    onKeyPress={utils.handleInputPhone}
+                                    onKeyPress={utils.handleInputNumber}
                                 />
                             </Form.Field>
                             <Form.Field>
@@ -269,7 +270,7 @@ class User extends React.Component {
         this.props.dispatch(PermissionActions.getPermissions());
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         const { reload, isCreatedSucceed } = nextProps;
         if (isCreatedSucceed) {
             this.handleCloseModal("updateModal");
@@ -358,38 +359,40 @@ class User extends React.Component {
         const { pageLoading, users, permissions, isCheckingUsername, isUsernameValid } = this.props;
         const { updateModal } = this.state;
         return (
-            <Grid.Row>
-                <Grid.Column width={16}>
-                    <Dimmer inverted active={pageLoading}>
-                        <Loader>Loading...</Loader>
-                    </Dimmer>
-                    <Segment>
-                        <Header>
-                            Danh sách người dùng
-                            <Button
-                                floated="right"
-                                icon="plus"
-                                content="Tạo mới"
-                                color="green"
-                                onClick={() => this.handleOpenModal("updateModal")}
-                            />
-                        </Header>
-                    </Segment>
-                    <Segment>
-                        <DataTable data={users} indexColumn={true} columns={this.columns} key="id" />
-                    </Segment>
-                </Grid.Column>
-                <UpdateModal
-                    open={updateModal}
-                    onClose={this.handleCloseModal}
-                    onSave={this.handleSaveUser}
-                    permissions={permissions}
-                    users={users}
-                    isCheckingUsername={isCheckingUsername}
-                    isUsernameValid={isUsernameValid}
-                    onCheckUsername={this.handleCheckUsername}
-                />
-            </Grid.Row>
+            <Layout permission={_var.permission.admin}>
+                <Grid.Row>
+                    <Grid.Column width={16}>
+                        <Dimmer inverted active={pageLoading}>
+                            <Loader>Loading...</Loader>
+                        </Dimmer>
+                        <Segment>
+                            <Header>
+                                Danh sách người dùng
+                                <Button
+                                    floated="right"
+                                    icon="plus"
+                                    content="Tạo mới"
+                                    color="green"
+                                    onClick={() => this.handleOpenModal("updateModal")}
+                                />
+                            </Header>
+                        </Segment>
+                        <Segment>
+                            <DataTable data={users} indexColumn={true} columns={this.columns} key="id" />
+                        </Segment>
+                    </Grid.Column>
+                    <UpdateModal
+                        open={updateModal}
+                        onClose={this.handleCloseModal}
+                        onSave={this.handleSaveUser}
+                        permissions={permissions}
+                        users={users}
+                        isCheckingUsername={isCheckingUsername}
+                        isUsernameValid={isUsernameValid}
+                        onCheckUsername={this.handleCheckUsername}
+                    />
+                </Grid.Row>
+            </Layout>
         );
     }
 }

@@ -3,6 +3,8 @@ import DataTable from "../../components/table/DataTable";
 import { PermissionActions } from "../../redux/_actions/user/permissionA";
 import { connect } from "react-redux";
 import { Segment, Header, Dimmer, Loader, Button, Grid, Modal, Input, Form } from "semantic-ui-react";
+import Layout from "../../components/layout/layout";
+import _var from "../../utils/_var";
 
 class UpdateModal extends React.Component {
     constructor(props) {
@@ -14,7 +16,7 @@ class UpdateModal extends React.Component {
         };
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         const { open, permission } = nextProps;
         if (permission && !this.state.id) {
             this.setState({
@@ -89,7 +91,7 @@ class Permission extends React.Component {
         this.props.dispatch(PermissionActions.getPermissions());
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         const { reload, isCreatedSucceed } = nextProps;
         if (isCreatedSucceed) {
             this.handleCloseModal("updateModal");
@@ -150,7 +152,7 @@ class Permission extends React.Component {
     handleCloseModal = (name) => {
         this.setState({
             [name]: false,
-            permission: ""
+            permission: "",
         });
     };
 
@@ -173,34 +175,36 @@ class Permission extends React.Component {
         const { pageLoading, permissions } = this.props;
         const { permission, updateModal } = this.state;
         return (
-            <Grid.Row>
-                <Grid.Column width={16}>
-                    <Dimmer inverted active={pageLoading}>
-                        <Loader>Loading...</Loader>
-                    </Dimmer>
-                    <Segment>
-                        <Header>
-                            Danh sách quyền hệ thống
-                            <Button
-                                floated="right"
-                                icon="plus"
-                                content="Tạo mới"
-                                color="green"
-                                onClick={() => this.handleOpenModal("updateModal")}
-                            />
-                        </Header>
-                    </Segment>
-                    <Segment>
-                        <DataTable data={permissions} indexColumn={true} columns={this.columns} key="id" />
-                    </Segment>
-                </Grid.Column>
-                <UpdateModal
-                    permission={permission}
-                    open={updateModal}
-                    onClose={this.handleCloseModal}
-                    onSave={this.handleSavePermission}
-                />
-            </Grid.Row>
+            <Layout permission={_var.permission.admin}>
+                <Grid.Row>
+                    <Grid.Column width={16}>
+                        <Dimmer inverted active={pageLoading}>
+                            <Loader>Loading...</Loader>
+                        </Dimmer>
+                        <Segment>
+                            <Header>
+                                Danh sách quyền hệ thống
+                                <Button
+                                    floated="right"
+                                    icon="plus"
+                                    content="Tạo mới"
+                                    color="green"
+                                    onClick={() => this.handleOpenModal("updateModal")}
+                                />
+                            </Header>
+                        </Segment>
+                        <Segment>
+                            <DataTable data={permissions} indexColumn={true} columns={this.columns} key="id" />
+                        </Segment>
+                    </Grid.Column>
+                    <UpdateModal
+                        permission={permission}
+                        open={updateModal}
+                        onClose={this.handleCloseModal}
+                        onSave={this.handleSavePermission}
+                    />
+                </Grid.Row>
+            </Layout>
         );
     }
 }

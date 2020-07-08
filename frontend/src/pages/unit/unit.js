@@ -3,6 +3,8 @@ import DataTable from "../../components/table/DataTable";
 import { UnitActions } from "../../redux/_actions/unit/unitA";
 import { connect } from "react-redux";
 import { Segment, Header, Dimmer, Loader, Button, Grid, Modal, Input, Form } from "semantic-ui-react";
+import Layout from "../../components/layout/layout";
+import _var from "../../utils/_var";
 
 class UpdateModal extends React.Component {
     constructor(props) {
@@ -14,7 +16,7 @@ class UpdateModal extends React.Component {
         };
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         const { open, unit } = nextProps;
         if (unit && !this.state.id) {
             this.setState({
@@ -89,7 +91,7 @@ class Unit extends React.Component {
         this.props.dispatch(UnitActions.getUnits());
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         const { reload, isCreatedSucceed } = nextProps;
         if (isCreatedSucceed) {
             this.handleCloseModal("updateModal");
@@ -168,34 +170,36 @@ class Unit extends React.Component {
         const { pageLoading, units } = this.props;
         const { unit, updateModal } = this.state;
         return (
-            <Grid.Row>
-                <Grid.Column width={16}>
-                    <Dimmer inverted active={pageLoading}>
-                        <Loader>Loading...</Loader>
-                    </Dimmer>
-                    <Segment>
-                        <Header>
-                            Danh sách đơn vị tính
-                            <Button
-                                floated="right"
-                                icon="plus"
-                                content="Tạo mới"
-                                color="green"
-                                onClick={() => this.handleOpenModal("updateModal")}
-                            />
-                        </Header>
-                    </Segment>
-                    <Segment>
-                        <DataTable data={units} indexColumn={true} columns={this.columns} key="id" />
-                    </Segment>
-                </Grid.Column>
-                <UpdateModal
-                    unit={unit}
-                    open={updateModal}
-                    onClose={this.handleCloseModal}
-                    onSave={this.handleSaveUnit}
-                />
-            </Grid.Row>
+            <Layout permission={_var.permission.admin}>
+                <Grid.Row>
+                    <Grid.Column width={16}>
+                        <Dimmer inverted active={pageLoading}>
+                            <Loader>Loading...</Loader>
+                        </Dimmer>
+                        <Segment>
+                            <Header>
+                                Danh sách đơn vị tính
+                                <Button
+                                    floated="right"
+                                    icon="plus"
+                                    content="Tạo mới"
+                                    color="green"
+                                    onClick={() => this.handleOpenModal("updateModal")}
+                                />
+                            </Header>
+                        </Segment>
+                        <Segment>
+                            <DataTable data={units} indexColumn={true} columns={this.columns} key="id" />
+                        </Segment>
+                    </Grid.Column>
+                    <UpdateModal
+                        unit={unit}
+                        open={updateModal}
+                        onClose={this.handleCloseModal}
+                        onSave={this.handleSaveUnit}
+                    />
+                </Grid.Row>
+            </Layout>
         );
     }
 }

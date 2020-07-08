@@ -4,6 +4,8 @@ import { ProviderActions } from "../../redux/_actions/provider/providerA";
 import { connect } from "react-redux";
 import { Segment, Header, Dimmer, Loader, Button, Grid, Modal, Input, Form, TextArea } from "semantic-ui-react";
 import { utils } from "../../utils/_common-functions";
+import Layout from "../../components/layout/layout";
+import _var from "../../utils/_var";
 
 class UpdateModal extends React.Component {
     constructor(props) {
@@ -17,7 +19,7 @@ class UpdateModal extends React.Component {
         };
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         const { open, provider } = nextProps;
         if (provider && !this.state.id) {
             this.setState({
@@ -66,7 +68,7 @@ class UpdateModal extends React.Component {
                         </Form.Field>
                         <Form.Field>
                             <Input
-                                onKeyPress={utils.handleInputPhone}
+                                onKeyPress={utils.handleInputNumber}
                                 onChange={this.handleChange("phone")}
                                 value={phone}
                                 fluid
@@ -104,7 +106,7 @@ class Provider extends React.Component {
         this.props.dispatch(ProviderActions.getProviders());
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         const { reload, isCreatedSucceed } = nextProps;
         if (isCreatedSucceed) {
             this.handleCloseModal("updateModal");
@@ -193,34 +195,36 @@ class Provider extends React.Component {
         const { pageLoading, providers } = this.props;
         const { provider, updateModal } = this.state;
         return (
-            <Grid.Row>
-                <Grid.Column width={16}>
-                    <Dimmer inverted active={pageLoading}>
-                        <Loader>Loading...</Loader>
-                    </Dimmer>
-                    <Segment>
-                        <Header>
-                            Danh sách nhà cung cấp
-                            <Button
-                                floated="right"
-                                icon="plus"
-                                content="Tạo mới"
-                                color="green"
-                                onClick={() => this.handleOpenModal("updateModal")}
-                            />
-                        </Header>
-                    </Segment>
-                    <Segment>
-                        <DataTable data={providers} indexColumn={true} columns={this.columns} key="id" />
-                    </Segment>
-                </Grid.Column>
-                <UpdateModal
-                    provider={provider}
-                    open={updateModal}
-                    onClose={this.handleCloseModal}
-                    onSave={this.handleSaveProvider}
-                />
-            </Grid.Row>
+            <Layout permission={_var.permission.admin}>
+                <Grid.Row>
+                    <Grid.Column width={16}>
+                        <Dimmer inverted active={pageLoading}>
+                            <Loader>Loading...</Loader>
+                        </Dimmer>
+                        <Segment>
+                            <Header>
+                                Danh sách nhà cung cấp
+                                <Button
+                                    floated="right"
+                                    icon="plus"
+                                    content="Tạo mới"
+                                    color="green"
+                                    onClick={() => this.handleOpenModal("updateModal")}
+                                />
+                            </Header>
+                        </Segment>
+                        <Segment>
+                            <DataTable data={providers} indexColumn={true} columns={this.columns} key="id" />
+                        </Segment>
+                    </Grid.Column>
+                    <UpdateModal
+                        provider={provider}
+                        open={updateModal}
+                        onClose={this.handleCloseModal}
+                        onSave={this.handleSaveProvider}
+                    />
+                </Grid.Row>
+            </Layout>
         );
     }
 }

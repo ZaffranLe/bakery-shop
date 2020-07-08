@@ -1,8 +1,9 @@
 import actionTypes from "../../_constants/actionTypes";
 
 const defaultState = {
-    pageLoading: false,
+    pageLoading: true,
     products: [],
+    product: "",
     types: [],
     units: [],
     ingredients: [],
@@ -13,17 +14,30 @@ const defaultState = {
 export default (state = defaultState, action) => {
     switch (action.type) {
         case actionTypes.PRODUCT_GET_TYPE:
-        case actionTypes.UNIT_GET_UNITS:
         case actionTypes.INGREDIENT_GET_INGREDIENTS:
+        case actionTypes.UNIT_GET_UNITS:
         case actionTypes.PRODUCT_GET_PRODUCTS:
+        case actionTypes.PRODUCT_GET_PRODUCT:
         case actionTypes.PRODUCT_CREATE_PRODUCT:
         case actionTypes.PRODUCT_UPDATE_PRODUCT:
         case actionTypes.PRODUCT_DELETE_PRODUCT:
+        case actionTypes.PRODUCT_CREATE_COMMENT:
             return {
                 ...state,
                 pageLoading: true,
             };
-
+        case actionTypes.PRODUCT_CREATE_COMMENT_SUCCEED:
+            return {
+                ...state,
+                pageLoading: false,
+                reload: true,
+            };
+        case actionTypes.PRODUCT_GET_TYPES_SUCCEED:
+            return {
+                ...state,
+                types: action.data,
+                pageLoading: false,
+            };
         case actionTypes.PRODUCT_CREATE_PRODUCT_SUCCEED:
             return {
                 ...state,
@@ -37,9 +51,16 @@ export default (state = defaultState, action) => {
         case actionTypes.PRODUCT_CREATE_PRODUCT_FAILED:
         case actionTypes.PRODUCT_UPDATE_PRODUCT_FAILED:
         case actionTypes.PRODUCT_DELETE_PRODUCT_FAILED:
+        case actionTypes.PRODUCT_CREATE_COMMENT_FAILED:
             return {
                 ...state,
                 pageLoading: false,
+            };
+        case actionTypes.PRODUCT_GET_PRODUCT_FAILED:
+            return {
+                ...state,
+                pageLoading: false,
+                reload: false,
             };
         case actionTypes.PRODUCT_GET_PRODUCTS_FAILED:
             return {
@@ -80,6 +101,13 @@ export default (state = defaultState, action) => {
                 ...state,
                 pageLoading: false,
                 reload: true,
+            };
+        case actionTypes.PRODUCT_GET_PRODUCT_SUCCEED:
+            return {
+                ...state,
+                pageLoading: false,
+                product: action.data,
+                reload: false,
             };
         default:
             return state;

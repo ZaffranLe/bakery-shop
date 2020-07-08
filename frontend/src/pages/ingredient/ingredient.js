@@ -16,6 +16,8 @@ import {
     TextArea,
     Dropdown,
 } from "semantic-ui-react";
+import Layout from "../../components/layout/layout";
+import _var from "../../utils/_var";
 
 class UpdateModal extends React.Component {
     constructor(props) {
@@ -27,10 +29,11 @@ class UpdateModal extends React.Component {
             description: "",
             quantity: "",
             unitOptions: [],
+            warningThreshold: "",
         };
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         const { open, ingredient, units } = nextProps;
         const { id, unitOptions } = this.state;
         if (ingredient && !id) {
@@ -46,6 +49,7 @@ class UpdateModal extends React.Component {
                 name: "",
                 description: "",
                 quantity: "",
+                warningThreshold: "",
             });
         }
 
@@ -65,12 +69,13 @@ class UpdateModal extends React.Component {
     }
 
     handleSaveIngredient = () => {
-        const { name, idUnit, quantity, description } = this.state;
+        const { name, idUnit, quantity, description, warningThreshold } = this.state;
         const info = {
             name,
             idUnit,
             description,
             quantity,
+            warningThreshold,
         };
         this.props.onSave(info);
     };
@@ -83,22 +88,19 @@ class UpdateModal extends React.Component {
 
     render() {
         const { open, onClose } = this.props;
-        const { name, idUnit, description, unitOptions } = this.state;
+        const { name, idUnit, description, unitOptions, warningThreshold } = this.state;
         return (
             <Modal open={open} size="small">
                 <Modal.Header>Nguyên liệu</Modal.Header>
                 <Modal.Content>
                     <Form>
                         <Form.Field>
-                            <Input onChange={this.handleChange("name")} value={name} fluid label="Tên" />
+                            <label>Tên</label>
+                            <Input onChange={this.handleChange("name")} value={name} fluid />
                         </Form.Field>
                         <Form.Field>
-                            <Input
-                                onChange={this.handleChange("description")}
-                                value={description}
-                                fluid
-                                label="Mô tả"
-                            />
+                            <label>Mô tả</label>
+                            <Input onChange={this.handleChange("description")} value={description} fluid />
                         </Form.Field>
                         <Form.Field>
                             <label>Đơn vị tính</label>
@@ -109,6 +111,10 @@ class UpdateModal extends React.Component {
                                 selection
                                 fluid
                             />
+                        </Form.Field>
+                        <Form.Field>
+                            <label>Số lượng tồn kho cảnh báo</label>
+                            <Input onChange={this.handleChange("warningThreshold")} value={warningThreshold} fluid />
                         </Form.Field>
                     </Form>
                 </Modal.Content>
@@ -135,7 +141,7 @@ class Ingredient extends React.Component {
         this.props.dispatch(UnitActions.getUnits());
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         const { reload, isCreatedSucceed } = nextProps;
         if (isCreatedSucceed) {
             this.handleCloseModal("updateModal");
@@ -163,6 +169,10 @@ class Ingredient extends React.Component {
         {
             name: "quantity",
             title: "Số lượng tồn kho",
+        },
+        {
+            name: "warningThreshold",
+            title: "Ngưỡng cảnh báo",
         },
         {
             title: "Hành động",
@@ -227,35 +237,37 @@ class Ingredient extends React.Component {
         const { pageLoading, ingredients, units } = this.props;
         const { ingredient, updateModal } = this.state;
         return (
-            <Grid.Row>
-                <Grid.Column width={16}>
-                    <Dimmer inverted active={pageLoading}>
-                        <Loader>Loading...</Loader>
-                    </Dimmer>
-                    <Segment>
-                        <Header>
-                            Danh sách nguyên liệu
-                            <Button
-                                floated="right"
-                                icon="plus"
-                                content="Tạo mới"
-                                color="green"
-                                onClick={() => this.handleOpenModal("updateModal")}
-                            />
-                        </Header>
-                    </Segment>
-                    <Segment>
-                        <DataTable data={ingredients} indexColumn={true} columns={this.columns} key="id" />
-                    </Segment>
-                </Grid.Column>
-                <UpdateModal
-                    ingredient={ingredient}
-                    open={updateModal}
-                    onClose={this.handleCloseModal}
-                    onSave={this.handleSaveIngredient}
-                    units={units}
-                />
-            </Grid.Row>
+            <Layout permission={_var.permission.admin}>
+                <Grid.Row>
+                    <Grid.Column width={16}>
+                        <Dimmer inverted active={pageLoading}>
+                            <Loader>Loading...</Loader>
+                        </Dimmer>
+                        <Segment>
+                            <Header>
+                                Danh sách nguyên liệu
+                                <Button
+                                    floated="right"
+                                    icon="plus"
+                                    content="Tạo mới"
+                                    color="green"
+                                    onClick={() => this.handleOpenModal("updateModal")}
+                                />
+                            </Header>
+                        </Segment>
+                        <Segment>
+                            <DataTable data={ingredients} indexColumn={true} columns={this.columns} key="id" />
+                        </Segment>
+                    </Grid.Column>
+                    <UpdateModal
+                        ingredient={ingredient}
+                        open={updateModal}
+                        onClose={this.handleCloseModal}
+                        onSave={this.handleSaveIngredient}
+                        units={units}
+                    />
+                </Grid.Row>
+            </Layout>
         );
     }
 }
