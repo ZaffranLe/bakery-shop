@@ -7,15 +7,15 @@ const defaultState = {
     units: [],
     ingredients: [],
     isCreatedSucceed: false,
+    reload: false,
 };
 
 export default (state = defaultState, action) => {
     switch (action.type) {
         case actionTypes.PRODUCT_GET_TYPE:
-        case actionTypes.PRODUCT_GET_PRODUCTS:
-        case actionTypes.PRODUCT_CREATE_PRODUCT:
         case actionTypes.UNIT_GET_UNITS:
         case actionTypes.INGREDIENT_GET_INGREDIENTS:
+        case actionTypes.PRODUCT_GET_PRODUCTS:
         case actionTypes.PRODUCT_CREATE_PRODUCT:
         case actionTypes.PRODUCT_UPDATE_PRODUCT:
         case actionTypes.PRODUCT_DELETE_PRODUCT:
@@ -23,12 +23,7 @@ export default (state = defaultState, action) => {
                 ...state,
                 pageLoading: true,
             };
-        case actionTypes.PRODUCT_GET_TYPES_SUCCEED:
-            return {
-                ...state,
-                types: action.data,
-                pageLoading: false,
-            };
+
         case actionTypes.PRODUCT_CREATE_PRODUCT_SUCCEED:
             return {
                 ...state,
@@ -51,6 +46,7 @@ export default (state = defaultState, action) => {
                 ...state,
                 pageLoading: false,
                 isCreatedSucceed: false,
+                reload: false,
             };
         case actionTypes.PRODUCT_GET_PRODUCTS_SUCCEED:
             return {
@@ -58,6 +54,7 @@ export default (state = defaultState, action) => {
                 pageLoading: false,
                 isCreatedSucceed: false,
                 products: action.data,
+                reload: false,
             };
         case actionTypes.UNIT_GET_UNITS_SUCCEED:
             return {
@@ -71,12 +68,18 @@ export default (state = defaultState, action) => {
                 ingredients: action.data,
                 pageLoading: false,
             };
+        case actionTypes.PRODUCT_GET_TYPES_SUCCEED:
+            return {
+                ...state,
+                types: action.data,
+                pageLoading: false,
+            };
         case actionTypes.PRODUCT_UPDATE_PRODUCT_SUCCEED:
         case actionTypes.PRODUCT_DELETE_PRODUCT_SUCCEED:
             return {
                 ...state,
                 pageLoading: false,
-                // reload: true,
+                reload: true,
             };
         default:
             return state;

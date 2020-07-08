@@ -76,7 +76,7 @@ function checkToken() {
             dispatch(_beginAction());
             const token = window.localStorage.getItem("token");
             if (token) {
-                const userInfo = await jwt.verify(token, _var.jwt.tokenSecret);
+                const userInfo = jwt.decode(token);
                 dispatch(_succeed(userInfo));
             } else {
                 dispatch(_failed());
