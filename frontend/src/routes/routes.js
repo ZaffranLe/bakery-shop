@@ -1,6 +1,6 @@
 import React from "react";
 import { Router } from "react-router-dom";
-import { Route, Switch } from "react-router";
+import { Route, Switch, Redirect } from "react-router";
 import { history } from "./history";
 import HomePage from "../pages/home-page/index";
 import AdminPanel from "../pages/admin-panel/admin-panel";
@@ -27,6 +27,7 @@ class Routes extends React.Component {
         return (
             <Router history={history}>
                 <Switch>
+                    <Redirect from="/" to="/product" exact />
                     <Route exact path="/admin-panel/permission" render={() => <Permission />} />
                     <Route exact path="/admin-panel/export-receipt/status" render={() => <ExportReceiptStatus />} />
                     <Route exact path="/admin-panel/export-receipt" render={() => <ExportReceipt />} />

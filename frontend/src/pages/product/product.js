@@ -4,7 +4,22 @@ import { IngredientActions } from "../../redux/_actions/ingredient/ingredientA";
 import { UnitActions } from "../../redux/_actions/unit/unitA";
 import { ProductTypeActions } from "../../redux/_actions/product/typeA";
 import { connect, useSelector } from "react-redux";
-import { Segment, Header, Dimmer, Loader, Button, Grid, Modal, Input, Form, Dropdown, Image } from "semantic-ui-react";
+import {
+    Segment,
+    Header,
+    Dimmer,
+    Loader,
+    Button,
+    Grid,
+    Modal,
+    Input,
+    Form,
+    Dropdown,
+    Image,
+    Pagination,
+    Icon,
+    Message,
+} from "semantic-ui-react";
 import { toast } from "react-toastify";
 import ProductCard from "./product-card";
 import Carousel from "../../components/carousel/carousel";
@@ -13,6 +28,7 @@ import { v4 } from "uuid";
 import Layout from "../../components/layout/layout";
 import Auth from "../../components/auth/auth";
 import { CartActions } from "../../redux/_actions/shopping-cart/cartA";
+import _ from "lodash";
 
 class UpdateModal extends React.Component {
     constructor(props) {
@@ -471,6 +487,7 @@ class UpdateModal extends React.Component {
 }
 
 const ORDER_VALUES = {
+    NEWEST: 0,
     PRICE_ASC: 1,
     PRICE_DESC: 2,
     NAME_A_TO_Z: 3,
@@ -481,6 +498,11 @@ class Product extends React.Component {
     constructor(props) {
         super(props);
         const orderOptions = [
+            {
+                key: ORDER_VALUES.NEWEST,
+                value: ORDER_VALUES.NEWEST,
+                text: "Mới nhất",
+            },
             {
                 key: ORDER_VALUES.PRICE_ASC,
                 value: ORDER_VALUES.PRICE_ASC,
@@ -515,6 +537,8 @@ class Product extends React.Component {
             higherPrice: 0,
             order: "",
             orderOptions,
+            currentPage: 1,
+            itemsPerPage: 12,
         };
     }
 
@@ -627,6 +651,13 @@ class Product extends React.Component {
         }
 
         switch (order) {
+            case ORDER_VALUES.NEWEST:
+                products = _.reverse(
+                    _.sortBy(products, function (product) {
+                        return product.createdDate;
+                    })
+                );
+                break;
             case ORDER_VALUES.PRICE_ASC:
                 products = products.sort((a, b) => {
                     return a.unitPrice - b.unitPrice;
@@ -659,13 +690,14 @@ class Product extends React.Component {
 
         this.setState({
             productsFiltered: products,
+            currentPage: 1,
         });
     };
 
     handleRefreshFilter = () => {
         this.setState({
             typesFiltered: [],
-            currentName: [],
+            currentName: "",
             lowerPrice: 0,
             higherPrice: 0,
             order: "",
@@ -684,6 +716,12 @@ class Product extends React.Component {
         this.props.dispatch(CartActions.addProduct(info));
     };
 
+    handleChangePage = (e, data) => {
+        this.setState({
+            currentPage: data.activePage,
+        });
+    };
+
     render() {
         const { pageLoading, types, ingredients, units, user } = this.props;
         const {
@@ -697,6 +735,8 @@ class Product extends React.Component {
             higherPrice,
             order,
             orderOptions,
+            currentPage,
+            itemsPerPage,
         } = this.state;
         return (
             <Layout permission={_var.permission.none}>
@@ -728,18 +768,45 @@ class Product extends React.Component {
                             <Grid.Column width={12}>
                                 <Segment>
                                     <Grid>
-                                        {productsFiltered.map((product, idx) => {
-                                            return (
-                                                <ProductCard
-                                                    product={product}
-                                                    key={idx}
-                                                    user={user}
-                                                    onClickEdit={this.handleClickEdit}
-                                                    onClickDelete={this.handleClickDelete}
-                                                    onAddItemToCart={this.addItemToCart}
-                                                />
-                                            );
-                                        })}
+                                        {productsFiltered.length > 0 ? (
+                                            productsFiltered
+                                                .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+                                                .map((product, idx) => {
+                                                    return (
+                                                        <ProductCard
+                                                            product={product}
+                                                            key={idx}
+                                                            user={user}
+                                                            onClickEdit={this.handleClickEdit}
+                                                            onClickDelete={this.handleClickDelete}
+                                                            onAddItemToCart={this.addItemToCart}
+                                                        />
+                                                    );
+                                                })
+                                        ) : (
+                                            <Grid.Column width={16}>
+                                                <Message warning style={{ width: "100%" }}>
+                                                    <Message.Header>Không có sản phẩm nào</Message.Header>
+                                                </Message>
+                                            </Grid.Column>
+                                        )}
+                                    </Grid>
+                                    <Grid>
+                                        <Grid.Column width={16} style={{ textAlign: "center" }}>
+                                            <Pagination
+                                                activePage={currentPage}
+                                                ellipsisItem={{
+                                                    content: <Icon name="ellipsis horizontal" />,
+                                                    icon: true,
+                                                }}
+                                                firstItem={{ content: <Icon name="angle double left" />, icon: true }}
+                                                lastItem={{ content: <Icon name="angle double right" />, icon: true }}
+                                                prevItem={{ content: <Icon name="angle left" />, icon: true }}
+                                                nextItem={{ content: <Icon name="angle right" />, icon: true }}
+                                                totalPages={Math.ceil(productsFiltered.length / itemsPerPage)}
+                                                onPageChange={this.handleChangePage}
+                                            />
+                                        </Grid.Column>
                                     </Grid>
                                 </Segment>
                             </Grid.Column>
@@ -787,7 +854,7 @@ class Product extends React.Component {
                                                     value={higherPrice}
                                                     fluid
                                                     type="number"
-                                                    min={lowerPrice}
+                                                    min={0}
                                                 />
                                             </Form.Field>
                                         </Form.Group>

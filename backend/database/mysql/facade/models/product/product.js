@@ -15,7 +15,8 @@ async function getProducts() {
                    (SELECT GROUP_CONCAT(CONCAT(t5.idIngredient,"-",t5.amount) SEPARATOR ';') FROM product_ingredient t5 WHERE t1.id = t5.idProduct) AS ingredients
                    FROM product t1
                    JOIN unit t2 ON t1.idUnit = t2.id
-                   WHERE t1.isDeleted = 0`;
+                   WHERE t1.isDeleted = 0
+                   ORDER BY t1.createdDate DESC`;
     return await db.query(query, []);
 }
 
