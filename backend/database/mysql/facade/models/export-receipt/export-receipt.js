@@ -52,11 +52,11 @@ async function createExportReceipt(info) {
             "note",
         ];
         const receiptData = _.pick(info, receiptFields);
-        const insertReceiptQuery = `INSERT INTO export_product_receipt SET ?`;
+        const insertReceiptQuery = `INSERT INTO export_receipt SET ?`;
         const result = await db.transactionQuery(con, insertReceiptQuery, [receiptData]);
 
         if (info["products"].length > 0) {
-            const insertProductReceiptQuery = `INSERT INTO detail_export_product_receipt SET ?`;
+            const insertProductReceiptQuery = `INSERT INTO detail_export_receipt SET ?`;
             for (let product of info["products"]) {
                 const data = {
                     idReceipt: result.insertId,
@@ -80,8 +80,8 @@ async function createExportReceipt(info) {
 
 async function getExportReceipts(userId = "") {
     const params = [];
-    let receiptQuery = `SELECT t1.*, t2.description AS statusName FROM export_product_receipt t1
-                          JOIN export_receipt_status t2 ON t1.status = t2.id`;
+    let receiptQuery = `SELECT t1.*, t2.description AS statusName FROM export_receipt t1
+                          JOIN export_receipt_status t2 ON t1.idStatus = t2.id`;
     if (userId) {
         receiptQuery += " WHERE t1.idUser = ?";
         params.push(userId);
@@ -91,16 +91,16 @@ async function getExportReceipts(userId = "") {
 }
 
 async function updateExportReceipts(id, status) {
-    const query = `UPDATE export_product_receipt SET status = ? WHERE id = ?`;
+    const query = `UPDATE export_receipt SET status = ? WHERE id = ?`;
     await db.query(query, [status, id]);
 }
 
 async function getDetailExportReceipt(id) {
-    const receiptQuery = `SELECT * FROM export_product_receipt WHERE id = ?`;
+    const receiptQuery = `SELECT * FROM export_receipt WHERE id = ?`;
     const receiptInfo = await db.query(receiptQuery, [id]);
 
     const receiptProductsQuery = `SELECT t1.*, (SELECT GROUP_CONCAT(t3.name SEPARATOR ';') FROM image t3 WHERE t3.idProduct = t1.idProduct) AS images, t2.name, t2.unitPrice, t4.name AS unit 
-                                  FROM detail_export_product_receipt t1 
+                                  FROM detail_export_receipt t1 
                                   JOIN product t2 ON t1.idProduct = t2.id
                                   JOIN unit t4 ON t2.idUnit = t4.id                     
                                   WHERE t1.idReceipt = ?`;

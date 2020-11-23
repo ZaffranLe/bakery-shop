@@ -39,7 +39,7 @@ function routes(app) {
         app.patch("/export-receipt/:id", verifyToken, checkPermission("admin"), exportReceiptController.updateExportReceipt);
         // product
         app.post("/product/comment", verifyToken, productCommentController.createComment);
-        app.get("/product/type", verifyToken, checkPermission("admin"), productTypeController.getAllType);
+        app.get("/product/type", productTypeController.getAllType);
         app.get("/product/type/:id", verifyToken, checkPermission("admin"), productTypeController.getType);
         app.post("/product/type", verifyToken, checkPermission("admin"), productTypeController.createType);
         app.patch("/product/type/:id", verifyToken, checkPermission("admin"), productTypeController.updateType);

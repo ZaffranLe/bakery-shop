@@ -10,7 +10,7 @@ module.exports = {
 
 async function getProducts() {
     const query = `SELECT t1.id, t1.name, t1.description, t1.unitPrice, t1.idUnit, t2.name AS unit, t1.createdDate, t1.viewNumber,
-                   (SELECT GROUP_CONCAT(t3.idType SEPARATOR ';') FROM product_type t3 WHERE t1.id = t3.idProduct) AS idTypes,
+                   (SELECT GROUP_CONCAT(t3.idType SEPARATOR ';') FROM product_category t3 WHERE t1.id = t3.idProduct) AS idTypes,
                    (SELECT GROUP_CONCAT(t4.name SEPARATOR ';') FROM image t4 WHERE t1.id = t4.idProduct) AS images,
                    (SELECT GROUP_CONCAT(CONCAT(t5.idIngredient,"-",t5.amount) SEPARATOR ';') FROM product_ingredient t5 WHERE t1.id = t5.idProduct) AS ingredients
                    FROM product t1
@@ -26,7 +26,7 @@ async function getProduct(id) {
 
     const imagesQuery = `SELECT name FROM image WHERE idProduct = ?`;
     const images = await db.query(imagesQuery, [id]);
-    const typesQuery = `SELECT t1.name FROM type t1 JOIN product_type t2 ON t1.id = t2.idType WHERE t2.idProduct = ?`;
+    const typesQuery = `SELECT t1.name FROM type t1 JOIN product_category t2 ON t1.id = t2.idType WHERE t2.idProduct = ?`;
     const types = await db.query(typesQuery, [id]);
     const ingredientsQuery = `SELECT t1.name, t2.name AS unit, t3.amount FROM ingredient t1 
                               JOIN unit t2 ON t1.idUnit = t2.id 
@@ -69,7 +69,7 @@ async function createProduct(info) {
             }
         }
         if (info["types"].length > 0) {
-            const insertTypesQuery = `INSERT INTO product_type SET ?`;
+            const insertTypesQuery = `INSERT INTO product_category SET ?`;
             for (let type of info["types"]) {
                 const typeData = {
                     idProduct: result.insertId,
@@ -160,8 +160,8 @@ async function updateProduct(id, info) {
             }
 
             if (info["typeObjArr"]) {
-                const insertTypeQuery = `INSERT INTO product_type SET ?`;
-                const deleteTypeQuery = `DELETE FROM product_type WHERE idProduct = ? AND idType = ?`;
+                const insertTypeQuery = `INSERT INTO product_category SET ?`;
+                const deleteTypeQuery = `DELETE FROM product_category WHERE idProduct = ? AND idType = ?`;
                 for (let type of info["typeObjArr"]) {
                     if (type["isDeleted"]) {
                         await db.transactionQuery(con, deleteTypeQuery, [id, type["id"]]);

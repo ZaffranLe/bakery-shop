@@ -43,13 +43,13 @@ INSERT INTO `comment` VALUES (10,1,'',3,'2020-05-08 17:09:44'),(10,4,'Rất là 
 UNLOCK TABLES;
 
 --
--- Table structure for table `detail_export_product_receipt`
+-- Table structure for table `detail_export_receipt`
 --
 
-DROP TABLE IF EXISTS `detail_export_product_receipt`;
+DROP TABLE IF EXISTS `detail_export_receipt`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `detail_export_product_receipt` (
+CREATE TABLE `detail_export_receipt` (
   `idReceipt` int(11) NOT NULL,
   `amount` int(11) DEFAULT NULL,
   `idProduct` int(11) NOT NULL,
@@ -57,19 +57,19 @@ CREATE TABLE `detail_export_product_receipt` (
   `isDeleted` int(11) DEFAULT '0',
   PRIMARY KEY (`idReceipt`,`idProduct`),
   KEY `FK_der_product_idx` (`idProduct`),
-  CONSTRAINT `FK_der_export_receipt` FOREIGN KEY (`idReceipt`) REFERENCES `export_product_receipt` (`id`),
+  CONSTRAINT `FK_der_export_receipt` FOREIGN KEY (`idReceipt`) REFERENCES `export_receipt` (`id`),
   CONSTRAINT `FK_der_product` FOREIGN KEY (`idProduct`) REFERENCES `product` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `detail_export_product_receipt`
+-- Dumping data for table `detail_export_receipt`
 --
 
-LOCK TABLES `detail_export_product_receipt` WRITE;
-/*!40000 ALTER TABLE `detail_export_product_receipt` DISABLE KEYS */;
-INSERT INTO `detail_export_product_receipt` VALUES (1,5,5,75000.00,0),(2,5,5,75000.00,0),(2,5,18,75000.00,0),(2,4,21,200000.00,0),(3,1,9,400000.00,0),(3,5,18,75000.00,0);
-/*!40000 ALTER TABLE `detail_export_product_receipt` ENABLE KEYS */;
+LOCK TABLES `detail_export_receipt` WRITE;
+/*!40000 ALTER TABLE `detail_export_receipt` DISABLE KEYS */;
+INSERT INTO `detail_export_receipt` VALUES (1,5,5,75000.00,0),(2,5,5,75000.00,0),(2,5,18,75000.00,0),(2,4,21,200000.00,0),(3,1,9,400000.00,0),(3,5,18,75000.00,0);
+/*!40000 ALTER TABLE `detail_export_receipt` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -102,13 +102,13 @@ LOCK TABLES `detail_import_ingredient_receipt` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `export_product_receipt`
+-- Table structure for table `export_receipt`
 --
 
-DROP TABLE IF EXISTS `export_product_receipt`;
+DROP TABLE IF EXISTS `export_receipt`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `export_product_receipt` (
+CREATE TABLE `export_receipt` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `date` datetime DEFAULT NULL,
   `totalPrice` decimal(10,2) DEFAULT NULL,
@@ -128,13 +128,13 @@ CREATE TABLE `export_product_receipt` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `export_product_receipt`
+-- Dumping data for table `export_receipt`
 --
 
-LOCK TABLES `export_product_receipt` WRITE;
-/*!40000 ALTER TABLE `export_product_receipt` DISABLE KEYS */;
-INSERT INTO `export_product_receipt` VALUES (1,'2020-05-09 10:20:49',75000.00,1,0,1,'Lê Sơn Tùng','Nhà mặt phố bản thân làm to','0829093384',''),(2,'2020-05-09 11:09:25',350000.00,NULL,0,1,'Trần Xuân Đạt','Quảng Ninh','0123456789','Gọi điện trước khi ship'),(3,'2020-05-09 17:04:45',475000.00,NULL,0,2,'Lê Sơn Tùng','Thuỵ khuê, Tây Hồ, hà nội','012345678','Giao trước 5h chiều');
-/*!40000 ALTER TABLE `export_product_receipt` ENABLE KEYS */;
+LOCK TABLES `export_receipt` WRITE;
+/*!40000 ALTER TABLE `export_receipt` DISABLE KEYS */;
+INSERT INTO `export_receipt` VALUES (1,'2020-05-09 10:20:49',75000.00,1,0,1,'Lê Sơn Tùng','Nhà mặt phố bản thân làm to','0829093384',''),(2,'2020-05-09 11:09:25',350000.00,NULL,0,1,'Trần Xuân Đạt','Quảng Ninh','0123456789','Gọi điện trước khi ship'),(3,'2020-05-09 17:04:45',475000.00,NULL,0,2,'Lê Sơn Tùng','Thuỵ khuê, Tây Hồ, hà nội','012345678','Giao trước 5h chiều');
+/*!40000 ALTER TABLE `export_receipt` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -301,7 +301,7 @@ CREATE TABLE `product` (
 
 LOCK TABLES `product` WRITE;
 /*!40000 ALTER TABLE `product` DISABLE KEYS */;
-INSERT INTO `product` VALUES (5,'Bánh khúc','Ai bánh khúc nóng đêy',4,15000.00,0),(9,'Bánh sinh nhật','HAPPY BIRTHDAY!!!',4,400000.00,0),(10,'Vẫn là bánh sinh nhật nhưng dùng để test edit','Zxc',4,500000.00,0),(12,'Bánh từ ngoài hành tinh','AND ITS NAME IS JOHHHNN CEEENAAAAAA',3,15.00,0),(13,'Kẹo đi','ádasd',2,15.00,0),(14,'a','a',2,5.00,1),(15,'hmm','asd',3,5.00,0),(16,'wasd','asd',3,51.00,0),(17,'oh no','123',3,15.00,1),(18,'Chè thái','Không phải của Thái Lan',3,15000.00,0),(20,'Bánh chả','Bánh chả???!!!',3,15000.00,0),(21,'Chè bưởi','Món ăn thanh mát ngày hè',2,50000.00,0);
+INSERT INTO `product`(id, `name`, `description`, idUnit, unitPrice, isDeleted) VALUES (5,'Bánh khúc','Ai bánh khúc nóng đêy',4,15000.00,0),(9,'Bánh sinh nhật','HAPPY BIRTHDAY!!!',4,400000.00,0),(10,'Vẫn là bánh sinh nhật nhưng dùng để test edit','Zxc',4,500000.00,0),(12,'Bánh từ ngoài hành tinh','AND ITS NAME IS JOHHHNN CEEENAAAAAA',3,15.00,0),(13,'Kẹo đi','ádasd',2,15.00,0),(14,'a','a',2,5.00,1),(15,'hmm','asd',3,5.00,0),(16,'wasd','asd',3,51.00,0),(17,'oh no','123',3,15.00,1),(18,'Chè thái','Không phải của Thái Lan',3,15000.00,0),(20,'Bánh chả','Bánh chả???!!!',3,15000.00,0),(21,'Chè bưởi','Món ăn thanh mát ngày hè',2,50000.00,0);
 /*!40000 ALTER TABLE `product` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -485,8 +485,3 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
-<<<<<<< HEAD:database.sql
--- Dump completed on 2020-05-22 22:50:49
-=======
--- Dump completed on 2020-05-06 23:01:58
->>>>>>> 6c058e17219aa954a2e3fab1be761dbf1a1ad1f7:Dump20200426.sql

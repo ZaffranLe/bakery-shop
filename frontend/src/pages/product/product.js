@@ -738,6 +738,8 @@ class Product extends React.Component {
             currentPage,
             itemsPerPage,
         } = this.state;
+        const pageCount = Math.ceil(productsFiltered.length / itemsPerPage);
+
         return (
             <Layout permission={_var.permission.none}>
                 <Carousel />
@@ -799,11 +801,11 @@ class Product extends React.Component {
                                                     content: <Icon name="ellipsis horizontal" />,
                                                     icon: true,
                                                 }}
-                                                firstItem={{ content: <Icon name="angle double left" />, icon: true }}
-                                                lastItem={{ content: <Icon name="angle double right" />, icon: true }}
-                                                prevItem={{ content: <Icon name="angle left" />, icon: true }}
-                                                nextItem={{ content: <Icon name="angle right" />, icon: true }}
-                                                totalPages={Math.ceil(productsFiltered.length / itemsPerPage)}
+                                                firstItem={currentPage != 1 && { content: <Icon name="angle double left" />, icon: true }}
+                                                lastItem={currentPage != pageCount && { content: <Icon name="angle double right" />, icon: true }}
+                                                prevItem={currentPage != 1 && { content: <Icon name="angle left" />, icon: true }}
+                                                nextItem={currentPage != pageCount && { content: <Icon name="angle right" />, icon: true }}
+                                                totalPages={pageCount}
                                                 onPageChange={this.handleChangePage}
                                             />
                                         </Grid.Column>

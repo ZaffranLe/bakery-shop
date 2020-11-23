@@ -61,7 +61,7 @@ class ExportReceipt extends React.Component {
             this.setState({
                 exportReceipts,
                 exportReceiptsFiltered: exportReceipts.filter(
-                    (receipt) => receipt["status"] == _var.export_receipt_status.pending
+                    (receipt) => receipt["idStatus"] == _var.export_receipt_status.pending
                 ),
                 statusFilter: _var.export_receipt_status.pending,
             });
@@ -72,7 +72,7 @@ class ExportReceipt extends React.Component {
         const { exportReceipts } = this.props;
         this.setState({
             statusFilter: data.value,
-            exportReceiptsFiltered: exportReceipts.filter((receipt) => receipt["status"] == data.value),
+            exportReceiptsFiltered: exportReceipts.filter((receipt) => receipt["idStatus"] == data.value),
         });
     };
 
@@ -149,7 +149,7 @@ class ExportReceipt extends React.Component {
                                                     </Table.Cell>
                                                     <Table.Cell>
                                                         <Dropdown
-                                                            defaultValue={receipt["status"]}
+                                                            defaultValue={receipt["idStatus"]}
                                                             options={statusOptions}
                                                             selection
                                                             onChange={this.handleChangeStatus(receipt["id"])}
