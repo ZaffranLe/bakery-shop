@@ -2,7 +2,6 @@ const mysqlProduct = require("../../../database/mysql/facade/models/product/prod
 const fs = require("fs");
 const https = require("https");
 const uuid = require("uuid");
-const sharp = require("sharp");
 
 module.exports = {
     getProducts,
@@ -30,11 +29,9 @@ async function createProduct(req, res) {
             for (let file of fileBase64ObjArr) {
                 const base64Data = file["base64"].split(",")[1];
                 const img = new Buffer(base64Data, "base64");
-                const resizedImageBuffer = await sharp(img).resize(600, 400).toBuffer();
-                let resizedImageData = resizedImageBuffer.toString("base64");
                 const fileName = uuid.v4() + ".jpg";
                 fileNames.push(fileName);
-                fs.writeFileSync(`${__dirname}/../../../public/img/${fileName}`, resizedImageData, "base64", function (
+                fs.writeFileSync(`${__dirname}/../../../public/img/${fileName}`, img, "base64", function (
                     err
                 ) {
                     if (err) {
@@ -80,11 +77,9 @@ async function updateProduct(req, res) {
             for (let file of fileBase64ObjArr) {
                 const base64Data = file["base64"].split(",")[1];
                 const img = new Buffer(base64Data, "base64");
-                const resizedImageBuffer = await sharp(img).resize(600, 400).toBuffer();
-                let resizedImageData = resizedImageBuffer.toString("base64");
                 const fileName = uuid.v4() + ".jpg";
                 fileNames.push(fileName);
-                fs.writeFileSync(`${__dirname}/../../../public/img/${fileName}`, resizedImageData, "base64", function (
+                fs.writeFileSync(`${__dirname}/../../../public/img/${fileName}`, img, "base64", function (
                     err
                 ) {
                     if (err) {
